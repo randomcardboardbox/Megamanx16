@@ -1,0 +1,19 @@
+{
+    "name": "x16_scripts",
+    "displayName": "X16 Scripts",
+    "description": "Scripts to help with exporting sprites to a format the Commander X16 can interpret.",
+    "version": "0.1",
+    "author": { "name": "Marcus Ellis",
+                "email": "randomcardboardbox.x86@gmail.com",
+                "url": "https://github.com/randomcardboardbox/" },
+    "contributors": [ ],
+    "publisher": "randomcardboardbox",
+    "license": "CC-BY-4.0",
+    "categories": [ "Scripts" ],
+    "contributes": {
+      "scripts": [
+          { "path": "./sprite_splitter_display.lua" },
+          { "path": "./x16_spr_exporter.lua"}
+      ]
+    }
+  }

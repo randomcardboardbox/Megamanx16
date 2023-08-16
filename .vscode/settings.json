@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "stdio.h": "c",
+        "utils.h": "c",
+        "string.h": "c",
+        "stdlib.h": "c",
+        "globals.h": "c"
+    },
+    "editor.cursorSmoothCaretAnimation": "on"
+}
