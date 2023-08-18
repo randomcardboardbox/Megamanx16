@@ -1,6 +1,7 @@
 #ifndef GLOBALS
 #define GLOBALS
 
+#include "object.h"
 #include "megaman.h"
 
 extern int scroll_x;
@@ -23,5 +24,8 @@ extern long map_l1_vram_addr;
 extern int tile_set_addr;
 
 extern struct MegamanStruct megaman_obj;
+
+extern struct ObjectReferenceStruct object_defs[10];
+extern struct ObjectStruct objects[10];
 
 #endif

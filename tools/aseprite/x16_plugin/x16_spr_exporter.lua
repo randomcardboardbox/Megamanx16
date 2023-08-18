@@ -99,8 +99,84 @@ function call_exporter()
         end
     end 
 
-    function parse_tile_data(file, cel, x, y, width, height)
+    function parse_tile_data(file, img)
+        if(dialog.data.spr_bpp == "8") then
+            for j=0, img.height-1, 1 do
+                for i=0, img.width-1, 1 do
+                    col_ind = img:getPixel(i,j)
+                    file:write(string.char(col_ind))
+                end
+            end
+        else
+            for j=0, img.height-1, 1 do
+                for i=0, (img.width/2)-1, 1 do
+                    col_ind1 = img:getPixel(i*2,j)
+                    col_ind2 = img:getPixel(i*2+1,j)
+
+                    local byte = (col_ind2%16) | ((col_ind1%16) << 4)
+                    file:write(string.char(byte))
+                end
+            end
+        end
+    end
+
+    function get_tilemap_ind(img, x,y)
+        if(x>=0 and x<img.width and y>=0 and y<img.height) then
+            return(img:getPixel(x,y))
+        else
+            return(0)
+        end
+    end
+
+    function parse_tilemap_data(file)
+        assert(active_spr.colorMode == ColorMode.INDEXED, "Sprite must be in idexed colour mode before it can be exported.")
+        
+        local layer = active_spr.layers[1]
+        local tileset = layer.tileset
+
+        local t_ind = 0
+        for i=1, 1000, 1 do
+            local tileImage = tileset:getTile(t_ind)
+            if(tileImage == nil) then break end
+            
+            parse_tile_data(file, tileImage)
+
+            t_ind = t_ind+1
+        end
+
+
+        -- export tileset data for python exporter script
+        local img_width = active_spr.width / 32
+        local img_height = active_spr.height / 32
+        local tilemap = layer.cels[1].image
+
+        metatiles = {}
+
+        for j=0, img_width, 1 do
+            for i=0, img_height, 1 do
+                local ind1 = get_tilemap_ind(tilemap, i*2,j*2)
+                local ind2 = get_tilemap_ind(tilemap, i*2+1,j*2)
+                local ind3 = get_tilemap_ind(tilemap, i*2,j*2+1)
+                local ind4 = get_tilemap_ind(tilemap, i*2+1,j*2+1)
+
+                metatile = {ind1,ind2,ind3,ind4}
+                metatiles[#metatiles+1] = metatile
+            end
+        end
+
+        local file,err = io.open(dialog.data.ts_filename,'wb')
+        if file then
+            file:write( json.encode(metatiles) )
+        else
+            print("error:", err)
+        end
+
+        file:close()
+    end
+
+    function parse_micro_spr_data(file, cel, x, y, width, height)
         local image = cel.image
+        
         if(dialog.data.spr_bpp == "8") then
             for j=0, height-1, 1 do
                 for i=0, width-1, 1 do
@@ -181,19 +257,18 @@ function call_exporter()
 
                     if(can_sav_tile(curr_spr_x, curr_spr_y, curr_tile_width, curr_tile_height, cel)) then
                         if(not dialog.data.export_as_metatile) then
-                            parse_tile_data(file, cel, curr_spr_x, curr_spr_y, curr_tile_width, curr_tile_height)
+                            parse_micro_spr_data(file, cel, curr_spr_x, curr_spr_y, curr_tile_width, curr_tile_height)
                             num_spr_tiles = num_spr_tiles + 1
                             table.insert(frames[#frames], {curr_spr_x + cel.position.x, curr_spr_y + cel.position.y, curr_tile_width, curr_tile_height, mem_addr})
                             if(dialog.data.spr_bpp == "8") then mem_addr = mem_addr + (curr_tile_width*curr_tile_height)
                             else mem_addr = mem_addr + (curr_tile_width*curr_tile_height) /2 end
                         else
-                            parse_tile_data(file, cel, curr_spr_x, curr_spr_y, curr_tile_width/2, curr_tile_height/2)
-                            parse_tile_data(file, cel, curr_spr_x+(curr_tile_width/2), curr_spr_y, curr_tile_width/2, curr_tile_height/2)
-                            parse_tile_data(file, cel, curr_spr_x, curr_spr_y+(curr_tile_height/2), curr_tile_width/2, curr_tile_height/2)
-                            parse_tile_data(file, cel, curr_spr_x+(curr_tile_width/2), curr_spr_y+(curr_tile_height/2), curr_tile_width/2, curr_tile_height/2)
+                            parse_micro_spr_data(file, cel, curr_spr_x, curr_spr_y, curr_tile_width/2, curr_tile_height/2)
+                            parse_micro_spr_data(file, cel, curr_spr_x+(curr_tile_width/2), curr_spr_y, curr_tile_width/2, curr_tile_height/2)
+                            parse_micro_spr_data(file, cel, curr_spr_x, curr_spr_y+(curr_tile_height/2), curr_tile_width/2, curr_tile_height/2)
+                            parse_micro_spr_data(file, cel, curr_spr_x+(curr_tile_width/2), curr_spr_y+(curr_tile_height/2), curr_tile_width/2, curr_tile_height/2)
                         end
                     end
-                    -- print("x: " .. tostring(curr_spr_x) .. " y: " .. tostring(curr_spr_y) .. " width: " .. tostring(curr_tile_width) .. " height: " .. tostring(curr_tile_height))
 
                     if(rows_first) then
                         curr_spr_x = curr_spr_x + curr_tile_width
@@ -221,7 +296,7 @@ function call_exporter()
                 num_spr_tiles = #tiles
                 for t_ind=1, #tiles, 1 do
                     tile = tiles[t_ind]
-                    parse_tile_data(file, cel, tile[1], tile[2], tile[3], tile[4])
+                    parse_micro_spr_data(file, cel, tile[1], tile[2], tile[3], tile[4])
 
                     table.insert(frames[#frames], {tile[1] + cel.position.x, tile[2] + cel.position.y, tile[3], tile[4], mem_addr})
                     if(dialog.data.spr_bpp == "8") then mem_addr = mem_addr + (tile[3]*tile[4])
@@ -333,7 +408,7 @@ function call_exporter()
 
         if (file and (not can_export_anim() or file2)) then
             file:write(string.char(0,0)) -- two byte buffer required for all x16 files
-            
+
             if(dialog.data.add_empty_tile) then
                 size = tonumber(dialog.data.spr_width) * tonumber(dialog.data.spr_height)
                 if(dialog.data.spr_bpp == "8") then
@@ -348,16 +423,22 @@ function call_exporter()
                 end
             end
 
-            return_data = parse_sprite_data(file)
-            num_of_sprites = return_data[1]
-            frames = return_data[2]
-            file:close()
 
-            if(can_export_anim()) then
-                file2:write(string.char(0,0))
-                parse_anim_data(file2, num_of_sprites, frames)
-                file2:close()
+            if(active_spr.layers[1].isTilemap) then
+                parse_tilemap_data(file)
+                app.command.Undo()
+            else
+                return_data = parse_sprite_data(file)
+                num_of_sprites = return_data[1]
+                frames = return_data[2]
+
+                if(can_export_anim()) then
+                    file2:write(string.char(0,0))
+                    parse_anim_data(file2, num_of_sprites, frames)
+                    file2:close()
+                end
             end
+            file:close()
 
             dialog:close()
         else
@@ -419,7 +500,8 @@ function call_exporter()
             active_spr.properties(plugin_key).spr_width = dialog.data.spr_width
         end
     }
-    dialog:combobox{ 
+
+    dialog:combobox{
         id="spr_height",
         option=active_spr.properties(plugin_key).spr_height,
         options={ "8", "16", "32", "64" },
@@ -460,6 +542,15 @@ function call_exporter()
         selected = active_spr.properties(plugin_key).add_empty_tile,
         onclick = function()
             active_spr.properties(plugin_key).add_empty_tile = dialog.data.add_empty_tile
+        end
+    }
+
+    dialog:check{ 
+        id = "as_tileset",
+        label = "Export as Tileset",
+        selected = active_spr.properties(plugin_key).as_tileset,
+        onclick = function()
+            active_spr.properties(plugin_key).as_tileset = dialog.data.as_tileset
         end
     }
 
@@ -522,6 +613,19 @@ function call_exporter()
         filename = active_spr.properties(plugin_key).anim_filename,
         onchange = function()
             active_spr.properties(plugin_key).anim_filename = dialog.data.anim_filename
+        end
+    }
+
+    dialog:file{
+        id = "ts_filename",
+        label = "Tileset Export File Name",
+        open = false,
+        save = true,
+        entry = true,
+        filetypes = {"json"},
+        filename = active_spr.properties(plugin_key).ts_filename,
+        onchange = function()
+            active_spr.properties(plugin_key).ts_filename = dialog.data.ts_filename
         end
     }
 

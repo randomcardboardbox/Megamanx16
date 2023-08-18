@@ -17,6 +17,7 @@
 .export __wait_for_nmi
 .export __get_joystick_state
 .export __init_irq_handler
+.export __force_halt
 
 ; TDONE:load file into ram
 ; TDONE:load file into vera
@@ -775,4 +776,8 @@ __get_joystick_state:
     pla
     eor #$FF
 
+    rts
+
+__force_halt:
+    brk
     rts

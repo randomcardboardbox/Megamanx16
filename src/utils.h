@@ -28,6 +28,8 @@ extern void _init_irq_handler(void);
 
 extern int _get_joystick_state(void);
 
+extern void _force_halt(void);
+
 // Function Definitions:
 
 char alloc_sprites(char size);

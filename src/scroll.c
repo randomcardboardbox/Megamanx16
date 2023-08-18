@@ -1,4 +1,4 @@
-// #include <stdio.h>
+#include <stdio.h>
 
 #include "globals.h"
 #include "utils.h"
@@ -60,10 +60,14 @@ void load_new_room_ver(){
         old_scroll_block_y = scroll_block;
     }
 
-    // megaman_obj.x = 32;
+    megaman_obj.x = megaman_obj.x%256;
+    scroll_x = 0;
     scroll_y = 0;
     L0_VSCROLL = scroll_y;
     L1_VSCROLL = scroll_y;
+
+    L0_HSCROLL = scroll_x;
+    L1_HSCROLL = scroll_x;
     
     for(index=0; index<32; index++){
         RAM_BANK_SEL = 1;
@@ -83,7 +87,7 @@ void load_new_room_hor(){
     load_map_data();
     // megaman_obj.x = 32;
     curr_room = 0;
-
+    
     scroll_x += scroll_speed;
 
     while((scroll_x%512) != 0){
@@ -123,8 +127,8 @@ void load_new_room_hor(){
 }
 
 void check_room_transition(){
-    int ent_dir = *(int *)(map_info_addr+(lvl_num*room_data_size)+5);
-    int ext_dir = *(int *)(map_info_addr+(lvl_num*room_data_size)+6);
+    int ent_dir = *(char *)(map_info_addr+(lvl_num*room_data_size)+5);
+    int ext_dir = *(char *)(map_info_addr+(lvl_num*room_data_size)+6);
 
     if(ext_dir == 1){
         if(curr_room == last_room-1 & (megaman_obj.x%256)>224){
@@ -141,6 +145,8 @@ void check_room_transition(){
 void set_scroll(){
     int scroll_block;
     int megaman_pos = (megaman_obj.x << 1) | megaman_obj.frac_x >> 7;
+    int ram_sec_f = 0;
+    int ram_sec_b = 0;
 
     last_room = *(char *)(map_info_addr+(lvl_num*room_data_size)+4);
 
@@ -155,20 +161,23 @@ void set_scroll(){
 
 
     scroll_block = scroll_x >> 4;
+    ram_sec_f = ((scroll_x+496) / 2048)*2;
+    ram_sec_b = (scroll_x / 2048)*2;
+
     L0_HSCROLL = scroll_x;
     L1_HSCROLL = scroll_x;
 
     if(old_scroll_block < scroll_block){
-        RAM_BANK_SEL = 1;
-        _load_vert_map_sect(0, 64, 0, scroll_block+31, tile_map0_ram_addr, map_l0_vram_addr);
-        RAM_BANK_SEL = 2;
-        _load_vert_map_sect(0, 64, 0, scroll_block+31, tile_map1_ram_addr, map_l1_vram_addr);
+        RAM_BANK_SEL = ram_sec_f+1;
+        _load_vert_map_sect(0, 64, 0, (scroll_block+31)%128, tile_map0_ram_addr, map_l0_vram_addr);
+        RAM_BANK_SEL = ram_sec_f+2;
+        _load_vert_map_sect(0, 64, 0, (scroll_block+31)%128, tile_map1_ram_addr, map_l1_vram_addr);
     }
     if(old_scroll_block > scroll_block){
-        RAM_BANK_SEL = 1;
-        _load_vert_map_sect(0, 64, 0, scroll_block, tile_map0_ram_addr, map_l0_vram_addr);
-        RAM_BANK_SEL = 2;
-        _load_vert_map_sect(0, 64, 0, scroll_block, tile_map1_ram_addr, map_l1_vram_addr);
+        RAM_BANK_SEL = ram_sec_b+1;
+        _load_vert_map_sect(0, 64, 0, scroll_block%128, tile_map0_ram_addr, map_l0_vram_addr);
+        RAM_BANK_SEL = ram_sec_b+2;
+        _load_vert_map_sect(0, 64, 0, scroll_block%128, tile_map1_ram_addr, map_l1_vram_addr);
     }
 
     old_scroll_block = scroll_block;

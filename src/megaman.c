@@ -126,7 +126,7 @@ void update_megaman(){
         megaman_obj.status = megaman_obj.status | 0b00000100;
     }
     else if(get_pressed(joystick, JOY_LEFT)){
-        megaman_obj.x_vel = 0xFE;
+        megaman_obj.x_vel = 254;
         megaman_obj.x_frac_vel = 112;
         megaman_obj.status = megaman_obj.status & 0b11111101;
         megaman_obj.status = megaman_obj.status | 0b00000100;

@@ -1,0 +1,35 @@
+object struct:
+    - int x
+    - char frac_x
+    - int y
+    - char y_frac
+
+    - char x_vel
+    - char x_frac_vel
+    - char y_vel
+    - char y_frac_vel
+
+    - char health
+    - char status (state_machine)
+
+    - int anim_timer
+    - char frame
+    - char anim_index
+    - char spr_ind
+
+    - char obj_type_ref
+
+    - int timer1
+    - char timer2
+    
+    - char var1
+    - char var2
+    - char var3
+
+object_ref:
+    - char  object_type (enemy, item or bullet)
+    - int   mainloop function ptr
+    - char  mainloop function ptr bank
+    - int   anim_addr
+    - char  num_of_sprs
+    - char  palette offset

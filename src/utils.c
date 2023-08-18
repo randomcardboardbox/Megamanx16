@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "globals.h"
 #include "utils.h"
@@ -77,14 +78,23 @@ char get_pressed(int joystick, int button){
 }
 
 void load_map_data(){
+    char no_of_secs = *(int *)(map_info_addr+(lvl_num*room_data_size)+7);
+    char i = 0;
+
     if(coll_data_addr != 0){
         free(coll_data_addr);
     }
+    
+    for(i=0; i<no_of_secs; i++){
+        tile_map[8] = 0x30+(i);
+        tile_map2[8] = 0x30+(i);
 
-    coll_data_addr = malloc( *(int *)(map_info_addr+(lvl_num*room_data_size)+2));
-    RAM_BANK_SEL = 1;
-    _load_file_into_ram(tile_map, 12, tile_map0_ram_addr);
-    RAM_BANK_SEL = 2;
-    _load_file_into_ram(tile_map2, 12, tile_map1_ram_addr);
+        coll_data_addr = malloc( *(int *)(map_info_addr+(lvl_num*room_data_size)+2));
+        RAM_BANK_SEL = (i*2)+1;
+        _load_file_into_ram(tile_map, 13, tile_map0_ram_addr);
+        RAM_BANK_SEL = (i*2)+2;
+        _load_file_into_ram(tile_map2, 13, tile_map1_ram_addr);
+    }
+
     _load_file_into_ram(col_map, 10, coll_data_addr);
 }

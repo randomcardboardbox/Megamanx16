@@ -1,0 +1,44 @@
+{
+    "manifest_version": "1.0.0",
+    "name": "Mega Man  X16",
+    "author": "Random Cardboard",
+    "app_version": "1.0.0",
+    "license": "GPL 3",
+    "start_prg": "MEGAMAN.PRG",
+    "resources": [
+        "MEGAMAN.PRG",
+
+        "MEGAMAN.ANM",
+        "MEGAMAN.PAL",
+        "MEGAMAN.SPR",
+
+        "GSTAGE.PAL",
+        "GSTAGETILES.SPR",
+
+        "GUTC00.STG",
+        "GUTC01.STG",
+        "GUTC02.STG",
+        "GUTC03.STG",
+        "GUTC04.STG",
+        "GUTC05.STG",
+        "GUTC06.STG",
+
+        "GUTI.STG",
+
+        "GUTR00L1.STG",
+        "GUTR01L1.STG",
+        "GUTR02L1.STG",
+        "GUTR03L1.STG",
+        "GUTR04L1.STG",
+        "GUTR05L1.STG",
+        "GUTR06L1.STG",
+        
+        "GUTR00L0.STG",
+        "GUTR01L0.STG",
+        "GUTR02L0.STG",
+        "GUTR03L0.STG",
+        "GUTR04L0.STG",
+        "GUTR05L0.STG",
+        "GUTR06L0.STG"
+    ]
+}
