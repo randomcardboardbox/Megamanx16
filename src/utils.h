@@ -21,7 +21,7 @@ extern void _load_vert_map_sect(char start_pos, char num_of_tiles, char y_scoll,
 
 extern char _check_collision_data(int col_data_addr, int x, int y);
 extern void _transfer_ram_to_vram(int ram_src_addr, int size, char vram_bank, int vram_des_addr);
-extern void _transfer_spr_attr_to_vram(int x_pos, int y_pos, int ram_src_addr, char vram_bank, int vram_des_addr);
+extern void _transfer_spr_attr_to_vram(char pal_off, int spr_addr_offset, int x_pos, int y_pos, int ram_src_addr, char vram_bank, int vram_des_addr);
 
 extern void _wait_for_nmi(void);
 extern void _init_irq_handler(void);
@@ -36,7 +36,9 @@ char alloc_sprites(char size);
 void dealloc_sprites(char index);
 
 void play_anim_frame(struct MegamanStruct *obj);
+void play_obj_anim_frame(struct ObjectStruct *obj);
 void play_anim(char num_of_frames, char *anim_ram_addr, struct MegamanStruct *obj);
+void play_obj_anim(char num_of_frames, char *anim_ram_addr, struct ObjectStruct *obj);
 
 void load_map_data();
 

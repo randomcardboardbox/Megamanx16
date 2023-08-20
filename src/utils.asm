@@ -637,7 +637,8 @@ __transfer_ram_to_vram:
     @end_loop:
     rts
 
-; _transfer_ram_to_vram(int x_pos, int y_pos, int ram_src_addr, char vram_bank, int vram_des_addr)
+; _transfer_ram_to_vram(char pal_off, int spr_addr_offset, int x_pos, int y_pos, int ram_src_addr, char vram_bank, int vram_des_addr)
+SPR_OFF_VAR = ZP_PTR_3
 __transfer_spr_attr_to_vram:
     ;set vram data port
     stz VERA_ctrl
@@ -665,6 +666,10 @@ __transfer_spr_attr_to_vram:
     @transfer_data:
     lda (RAM_ADDR)
 
+    cpx #0
+    beq @spr_off_low
+    cpx #1
+    beq @spr_off_high
     cpx #2
     beq @x_low
     cpx #3
@@ -673,6 +678,55 @@ __transfer_spr_attr_to_vram:
     beq @y_low
     cpx #5
     beq @y_high
+
+    cpx #7
+    beq @pal_offset
+
+    bra @continue_loop
+
+    @pal_offset:
+    ldy #6
+    ora (sp),y
+
+    bra @continue_loop
+
+    @spr_off_low:
+    pha ; push the original sprite address to the stack
+
+    ldy #4
+    lda (sp),y
+    lsr
+    sta SPR_OFF_VAR
+
+    ldy #5
+    lda (sp),y
+    asl
+    asl
+    asl
+    asl
+    asl
+    asl
+    asl
+    ora SPR_OFF_VAR
+    sta SPR_OFF_VAR
+
+    pla 
+    clc
+    adc SPR_OFF_VAR
+    php
+    
+    bra @continue_loop
+
+    @spr_off_high:
+    pha ; push the original sprite address to the stack
+
+    ldy #5
+    lda (sp),y
+    lsr 
+    sta SPR_OFF_VAR
+    pla
+    plp
+    adc SPR_OFF_VAR
 
     bra @continue_loop
 
@@ -718,7 +772,12 @@ __transfer_spr_attr_to_vram:
     inc sp
     inc sp
     inc sp
+
+    inc sp
+    inc sp
+    inc sp
     rts
+
 
 VSYNC_FLAG = $70
 __wait_for_nmi:

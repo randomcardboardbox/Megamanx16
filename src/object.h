@@ -3,8 +3,6 @@
 
 struct ObjectStruct
 {
-    char obj_type_ref;
-
     int x;
     char frac_x;
     int y;
@@ -14,6 +12,8 @@ struct ObjectStruct
     char x_frac_vel;
     char y_vel;
     char y_frac_vel;
+
+    char obj_type_ref;
 
     char health;
     char status;
@@ -34,11 +34,23 @@ struct ObjectStruct
 
 struct ObjectReferenceStruct
 {
-    int func_ptr;
+    void (*update_ptr)(char);
+    void (*draw_ptr)(char);
     char func_bank;
     int anim_addr;
+    int spr_addr;
     char num_of_sprs;
     char pal_off;
+    char width;
+    char height;
 };
+
+void update_objs(void);
+void draw_objs(void);
+char alloc_obj();
+void dealloc_obj(char obj_ind);
+
+int _dis_to_megaman(struct ObjectStruct *obj);
+void empty_obj_func(char obj_ind);
 
 #endif//OBJECT

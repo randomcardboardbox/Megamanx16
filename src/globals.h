@@ -4,6 +4,8 @@
 #include "object.h"
 #include "megaman.h"
 
+#define no_of_objs 50
+
 extern int scroll_x;
 extern int scroll_y;
 extern int map_info_addr;
@@ -25,7 +27,7 @@ extern int tile_set_addr;
 
 extern struct MegamanStruct megaman_obj;
 
-extern struct ObjectReferenceStruct object_defs[10];
-extern struct ObjectStruct objects[10];
+extern struct ObjectReferenceStruct object_defs[no_of_objs];
+extern struct ObjectStruct objects[no_of_objs];
 
 #endif

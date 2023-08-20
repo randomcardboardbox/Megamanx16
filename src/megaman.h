@@ -27,9 +27,9 @@ struct MegamanStruct {
 extern void _m_apply_velocity(int obj_addr);
 
 void move_megaman_obj(void);
-void update_megaman();
-void check_collision();
-void animate_megaman();
-void load_megaman_spr_data();
+void update_megaman(void);
+void check_collision(void);
+void animate_megaman(void);
+void load_megaman_spr_data(void);
 
 #endif //MEGAMAN

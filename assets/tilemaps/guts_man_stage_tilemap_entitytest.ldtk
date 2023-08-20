@@ -2660,16 +2660,16 @@
 					"entityInstances": [
 						{
 							"__identifier": "Met",
-							"__grid": [29,14],
+							"__grid": [26,18],
 							"__pivot": [0.5,0.5],
 							"__tags": ["Enemy"],
 							"__tile": { "tilesetUid": 136, "x": 0, "y": 0, "w": 64, "h": 64 },
 							"__smartColor": "#BE4A2F",
-							"iid": "dc5a0c90-3b70-11ee-a0e4-9f6c70e14da1",
+							"iid": "af649580-3b70-11ee-978b-bf8a3b089f27",
 							"width": 48,
 							"height": 48,
 							"defUid": 133,
-							"px": [472,232],
+							"px": [424,296],
 							"fieldInstances": [
 								{ "__identifier": "isRight", "__type": "Bool", "__value": true, "__tile": null, "defUid": 138, "realEditorValues": [] },
 								{ "__identifier": "objRef", "__type": "Int", "__value": 1, "__tile": null, "defUid": 139, "realEditorValues": [] }
@@ -2677,16 +2677,16 @@
 						},
 						{
 							"__identifier": "Met",
-							"__grid": [25,18],
+							"__grid": [42,10],
 							"__pivot": [0.5,0.5],
 							"__tags": ["Enemy"],
 							"__tile": { "tilesetUid": 136, "x": 0, "y": 0, "w": 64, "h": 64 },
 							"__smartColor": "#BE4A2F",
-							"iid": "df861f30-3b70-11ee-a0e4-1946b4ac98a1",
+							"iid": "b1a47360-3b70-11ee-978b-7d64fbd0677c",
 							"width": 48,
 							"height": 48,
 							"defUid": 133,
-							"px": [408,296],
+							"px": [680,168],
 							"fieldInstances": [
 								{ "__identifier": "isRight", "__type": "Bool", "__value": true, "__tile": null, "defUid": 138, "realEditorValues": [] },
 								{ "__identifier": "objRef", "__type": "Int", "__value": 1, "__tile": null, "defUid": 139, "realEditorValues": [] }

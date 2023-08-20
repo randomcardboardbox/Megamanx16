@@ -11,7 +11,7 @@ void load_megaman_spr_data(){
     char m_spr_filename[] = "megaman.spr";
     char m_anim_filename[] = "megaman.anm";
 
-    int *m_anim_addr = (int*) malloc(0x1000);
+    int *m_anim_addr = (int*) malloc(0x1200);
     char num_of_sprs = 0;
     char spr_ind = 0;
     
@@ -157,9 +157,6 @@ void animate_megaman(){
     char is_reverse = 0;
     int i=0;
 
-    int x_pos = ((megaman_obj.x<<1) | (megaman_obj.frac_x>>7)) - 32;
-    int y_pos = ((megaman_obj.y<<1) | (megaman_obj.frac_y>>7)) - 32;
-   
     if((megaman_obj.status & 0b00000010) == 0){
         is_reverse = 1;
     }

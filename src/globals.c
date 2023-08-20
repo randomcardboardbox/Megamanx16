@@ -16,9 +16,6 @@ char tile_map[] =   "gutr00l00.stg";
 char tile_map2[] =  "gutr00l10.stg";
 char col_map[] =    "gutc00.stg";
 
-long map_l0_vram_addr   = 0x07800;
-long map_l1_vram_addr   = 0x09000;
-int tile_set_addr      = 0x120; // mulitply by 8 to get the actual addr
-
-struct ObjectReferenceStruct object_defs[10];
-struct ObjectStruct objects[10];
+long map_l0_vram_addr   = 0x03800;
+long map_l1_vram_addr   = 0x04800;
+int tile_set_addr      = 0x058; // mulitply by 8 to get the actual addr

@@ -3,6 +3,7 @@
 
 #include "globals.h"
 #include "utils.h"
+#include "object.h"
 
 char spr_alloc_table[128] = {0};
 
@@ -15,9 +16,9 @@ char alloc_sprites(char size){
         if(spr_alloc_table[i] != 0){
             init_ind = i;
         }
-        if((i-init_ind)==(size-1)){
+        if((i-init_ind)==(size)){
             spr_alloc_table[init_ind] = size;
-            for (j=1; j<size; j++){
+            for (j=1; j<size+1; j++){
                 spr_alloc_table[init_ind+j] = 1;
             }
             return(init_ind);
@@ -40,7 +41,7 @@ void dealloc_sprites(char index){
 void play_anim_frame(struct MegamanStruct *obj){
     char is_reverse = 0;
     int i=0;
-    int x = ((((obj->x<<1) | (obj->frac_x>>7)) - 32)-scroll_x)&0b0000000111111111;
+    int x = ((((obj->x<<1) | (obj->frac_x>>7)) - 32)-scroll_x)&0b0000001111111111;
     int y = ((((obj->y<<1) | (obj->frac_y>>7)) - 32)-scroll_y)&0b0000000111111111;
 
     int base_addr;
@@ -49,21 +50,73 @@ void play_anim_frame(struct MegamanStruct *obj){
     base_addr = (obj->anim_addr+3)+(is_reverse*8*obj->num_of_sprs)+(2+16*obj->num_of_sprs)*obj->frame;
 
     for (i=0; i<obj->num_of_sprs; i++){
-        _transfer_spr_attr_to_vram(x, y, base_addr+(8*i), 1, &VRAM_sprattr+(8*(i+obj->spr_ind)));
+        _transfer_spr_attr_to_vram(0, 0, x, y, base_addr+(8*i), 1, &VRAM_sprattr+(8*(i+obj->spr_ind)));
     }
 }
 
-void play_anim(char num_of_frames, char *anim_ram_addr, struct MegamanStruct *obj){
-    char *frame_count_addr = (obj->anim_addr+1)+(2+16*obj->num_of_sprs) * anim_ram_addr[obj->anim_index];
-    if(obj->anim_timer <= 1){
+void play_obj_anim_frame(struct ObjectStruct *obj){
+    int anim_addr = object_defs[obj->obj_type_ref].anim_addr;
+    int num_of_sprs = object_defs[obj->obj_type_ref].num_of_sprs;
+    int spr_addr = object_defs[obj->obj_type_ref].spr_addr;
+    int pal_off = object_defs[obj->obj_type_ref].pal_off;
+
+    int width = object_defs[obj->obj_type_ref].width;
+    int height = object_defs[obj->obj_type_ref].height;
+
+    int spr_ind = obj->spr_ind;
+
+    char is_reverse = 0;
+    int i=0;
+    int x = ((((obj->x<<1) | (obj->frac_x>>7)) - width)-scroll_x);
+    int y = ((((obj->y<<1) | (obj->frac_y>>7)) - height)-scroll_y);
+
+    if(x < 512 & y < 512 & x > -64 & y > -64){
+        int base_addr;
+
+        if(!(obj->status & 0b00000010)){ is_reverse = 1; }
+        base_addr = (anim_addr+3)+(is_reverse*8*num_of_sprs)+(2+16*num_of_sprs)*obj->frame;
+
+        for (i=0; i<num_of_sprs; i++){
+            _transfer_spr_attr_to_vram(pal_off, spr_addr, x, y, base_addr+(8*i), 1, &VRAM_sprattr+(8*(i+obj->spr_ind)));
+        }
+    }
+}
+
+void play_obj_anim(char num_of_frames, char *anim_ram_addr, struct ObjectStruct *obj){
+    int anim_addr = object_defs[obj->obj_type_ref].anim_addr;
+    char num_of_sprs = object_defs[obj->obj_type_ref].num_of_sprs;
+    char *frame_count_addr;
+    
+    if(obj->anim_timer <= 0){
         obj->anim_index += 1;
-        obj->anim_timer = *frame_count_addr;
         
         if(obj->anim_index >= num_of_frames){
             obj->anim_index = 0;
         }
 
         obj->frame = anim_ram_addr[obj->anim_index];
+
+        frame_count_addr = (anim_addr+1)+(2+16*num_of_sprs) * (obj->frame);
+        obj->anim_timer = *frame_count_addr;
+    }
+    
+    obj->anim_timer -= 1;
+}
+
+void play_anim(char num_of_frames, char *anim_ram_addr, struct MegamanStruct *obj){
+    char *frame_count_addr;
+
+    if(obj->anim_timer <= 0){
+        obj->anim_index += 1;
+        
+        if(obj->anim_index >= num_of_frames){
+            obj->anim_index = 0;
+        }
+    
+        obj->frame = anim_ram_addr[obj->anim_index];
+
+        frame_count_addr = (obj->anim_addr+1)+(2+16*obj->num_of_sprs) * obj->frame;
+        obj->anim_timer = *frame_count_addr;
     }
     
     obj->anim_timer -= 1;

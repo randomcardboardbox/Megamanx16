@@ -44,7 +44,7 @@ void load_new_room_ver(){
         scroll_y += scroll_speed;
         L0_VSCROLL = scroll_y;
         L1_VSCROLL = scroll_y;
-        animate_megaman(megaman_obj);
+        animate_megaman();
         
         scroll_block = scroll_y >> 4;
 
@@ -103,7 +103,7 @@ void load_new_room_hor(){
         scroll_x += scroll_speed;
         L0_HSCROLL = scroll_x;
         L1_HSCROLL = scroll_x;
-        animate_megaman(megaman_obj);
+        animate_megaman();
         
         scroll_block = scroll_x >> 4;
 

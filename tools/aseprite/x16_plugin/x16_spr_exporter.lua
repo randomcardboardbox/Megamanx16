@@ -213,7 +213,7 @@ function call_exporter()
     end
 
     function parse_sprite_data(file)
-        assert(active_spr.colorMode == ColorMode.INDEXED, "Sprite must be in idexed colour mode before it can be exported.")
+        assert(active_spr.colorMode == ColorMode.INDEXED, "Sprite must be in indexed colour mode before it can be exported.")
         -- app.command.FlattenLayers()
 
         -- for frame=1, fr
@@ -439,7 +439,6 @@ function call_exporter()
                 end
             end
             file:close()
-
             dialog:close()
         else
             print("error 1:", err)
