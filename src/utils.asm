@@ -307,7 +307,6 @@ __offset_spr_position:
     inc sp
     rts    
 ; _clear_sprite_attribute(char attr_num)
-;TODO: finish function to be able to clear sprites other than the first one
 __clear_sprite_attribute:
     stz VERA_ctrl
     clc
@@ -327,6 +326,8 @@ __clear_sprite_attribute:
     lda VERA_data0
     and #%00001100
     stz VERA_data0
+
+    rts
 
 ; _set_layer0_enable(char enable)
 ; enable - 0 for diable, 1 for enable

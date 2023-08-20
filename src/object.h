@@ -14,6 +14,7 @@ struct ObjectStruct
     char y_frac_vel;
 
     char obj_type_ref;
+    char spawn_id;
 
     char health;
     char status;
@@ -36,7 +37,8 @@ struct ObjectReferenceStruct
 {
     void (*update_ptr)(char);
     void (*draw_ptr)(char);
-    char func_bank;
+    char upadte_func_bank;
+    char udraw_func_bank;
     int anim_addr;
     int spr_addr;
     char num_of_sprs;
@@ -52,5 +54,9 @@ void dealloc_obj(char obj_ind);
 
 int _dis_to_megaman(struct ObjectStruct *obj);
 void empty_obj_func(char obj_ind);
+void spawn_check(int chunk);
+void check_despawn(char obj_ind);
+
+extern void _update_objects(int obj_arr_addr, int obj_def_addr);
 
 #endif//OBJECT

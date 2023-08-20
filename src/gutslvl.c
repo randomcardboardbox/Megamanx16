@@ -44,7 +44,6 @@ void g_init_obj_refs(void){
     object_defs[1].spr_addr = met_spr_addr;
     object_defs[1].update_ptr = met_update;
     object_defs[1].draw_ptr = met_draw;
-    object_defs[1].func_bank = 0;
     object_defs[1].width = 32;
     object_defs[1].height = 32;
 
@@ -55,7 +54,6 @@ void g_init_obj_refs(void){
     object_defs[2].spr_addr = bullet_spr_addr;
     object_defs[2].update_ptr = bullet_update;
     object_defs[2].draw_ptr = bullet_draw;
-    object_defs[2].func_bank = 0;
     object_defs[2].width = 8;
     object_defs[2].height = 8;
 }

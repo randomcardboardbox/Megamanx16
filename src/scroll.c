@@ -22,7 +22,9 @@ void load_new_room_ver(){
     load_map_data();
     curr_room = 0;
 
-
+    for(index=0; index<16; index++){
+        spawn_check(index);
+    }
     for(index=0; index<32; index++){
         RAM_BANK_SEL = 1;
         _load_vert_map_sect(0, 64, 1, index, tile_map0_ram_addr, map_l0_vram_addr);
@@ -109,6 +111,9 @@ void load_new_room_hor(){
 
         if(old_scroll_block != scroll_block){
             int load_pos = (scroll_block%32)-1;
+            if(scroll_block%2 == 0){
+                spawn_check(scroll_block/2);
+            }
             RAM_BANK_SEL = 1;
             _load_vert_map_sect(0, 64, 0, load_pos, tile_map0_ram_addr, map_l0_vram_addr);
             RAM_BANK_SEL = 2;
@@ -127,8 +132,8 @@ void load_new_room_hor(){
 }
 
 void check_room_transition(){
-    int ent_dir = *(char *)(map_info_addr+(lvl_num*room_data_size)+5);
-    int ext_dir = *(char *)(map_info_addr+(lvl_num*room_data_size)+6);
+    int ent_dir = *(char *)(map_info_addr+(lvl_num*room_data_size)+7);
+    int ext_dir = *(char *)(map_info_addr+(lvl_num*room_data_size)+8);
 
     if(ext_dir == 1){
         if(curr_room == last_room-1 & (megaman_obj.x%256)>224){
@@ -148,7 +153,7 @@ void set_scroll(){
     int ram_sec_f = 0;
     int ram_sec_b = 0;
 
-    last_room = *(char *)(map_info_addr+(lvl_num*room_data_size)+4);
+    last_room = *(char *)(map_info_addr+(lvl_num*room_data_size)+6);
 
     if(curr_room > 0  | ( curr_room == 0 & megaman_obj.x > 128)){
         scroll_x = ((curr_room << 9) | megaman_pos)-256;
@@ -168,12 +173,18 @@ void set_scroll(){
     L1_HSCROLL = scroll_x;
 
     if(old_scroll_block < scroll_block){
+        if(scroll_block%2 == 0){
+            spawn_check((scroll_block/2)+16);
+        }
         RAM_BANK_SEL = ram_sec_f+1;
         _load_vert_map_sect(0, 64, 0, (scroll_block+31)%128, tile_map0_ram_addr, map_l0_vram_addr);
         RAM_BANK_SEL = ram_sec_f+2;
         _load_vert_map_sect(0, 64, 0, (scroll_block+31)%128, tile_map1_ram_addr, map_l1_vram_addr);
     }
     if(old_scroll_block > scroll_block){
+        if(scroll_block%2 == 0){
+            spawn_check(scroll_block/2);
+        }
         RAM_BANK_SEL = ram_sec_b+1;
         _load_vert_map_sect(0, 64, 0, scroll_block%128, tile_map0_ram_addr, map_l0_vram_addr);
         RAM_BANK_SEL = ram_sec_b+2;

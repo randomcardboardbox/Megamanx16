@@ -12,24 +12,32 @@ char alloc_sprites(char size){
     int j=0;
     int init_ind=0;
 
-    for (i=0; i<(128-size); i++){
+    for (i=0; i<(127-size); i++){
         if(spr_alloc_table[i] != 0){
-            init_ind = i;
+            init_ind = i+1;
         }
         if((i-init_ind)==(size)){
             spr_alloc_table[init_ind] = size;
-            for (j=1; j<size+1; j++){
+            for (j=1; j<size; j++){
                 spr_alloc_table[init_ind+j] = 1;
             }
             return(init_ind);
         }
+    }
+
+    spr_alloc_table[127-size] = size;
+    for (j=1; j<size; j++){
+        spr_alloc_table[(127-size)+j] = 1;
     }
     return(127-size);
 }
 
 void dealloc_sprites(char index){
     int i=0;
-    int size=spr_alloc_table[index+i];
+    int size=spr_alloc_table[index];
+    if(size == 0){
+        size = 1;
+    }
 
     for (i=0; i<size; i++){
         spr_alloc_table[index+i] = 0;
@@ -131,18 +139,19 @@ char get_pressed(int joystick, int button){
 }
 
 void load_map_data(){
-    char no_of_secs = *(int *)(map_info_addr+(lvl_num*room_data_size)+7);
+    char no_of_secs = *(int *)(map_info_addr+(lvl_num*room_data_size)+9);
     char i = 0;
 
-    if(coll_data_addr != 0){
-        free(coll_data_addr);
-    }
+    if(coll_data_addr != 0){ free(coll_data_addr); }
+    if(spawn_data_addr != 0){ free(spawn_data_addr); }
     
     for(i=0; i<no_of_secs; i++){
         tile_map[8] = 0x30+(i);
         tile_map2[8] = 0x30+(i);
 
         coll_data_addr = malloc( *(int *)(map_info_addr+(lvl_num*room_data_size)+2));
+        spawn_data_addr = malloc( *(int *)(map_info_addr+(lvl_num*room_data_size)+7));
+        
         RAM_BANK_SEL = (i*2)+1;
         _load_file_into_ram(tile_map, 13, tile_map0_ram_addr);
         RAM_BANK_SEL = (i*2)+2;
@@ -150,4 +159,5 @@ void load_map_data(){
     }
 
     _load_file_into_ram(col_map, 10, coll_data_addr);
+    _load_file_into_ram(spawn_map, 10, spawn_data_addr);
 }

@@ -12,6 +12,7 @@ extern int map_info_addr;
 extern int tile_map0_ram_addr;
 extern int tile_map1_ram_addr;
 extern int coll_data_addr;
+extern int spawn_data_addr;
 extern char curr_room;
 extern char lvl_num;
 extern char room_data_size;
@@ -20,10 +21,13 @@ extern char last_room;
 extern char tile_map[];
 extern char tile_map2[];
 extern char col_map[];
+extern char spawn_map[];
 
 extern long map_l0_vram_addr;
 extern long map_l1_vram_addr;
 extern int tile_set_addr;
+
+extern char objs_per_chunk;
 
 extern struct MegamanStruct megaman_obj;
 

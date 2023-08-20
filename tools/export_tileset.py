@@ -10,6 +10,7 @@ filename = "x16_file_sys/GUT"
 extension = ".STG"
 init_pal_offset = 2
 dir_arr = [None, "Right", "Left", "Up", "Down"]
+OBJS_PER_CHUNK = 3
 
 def find_enum(enums, tag):
     for enum in enums:
@@ -103,6 +104,61 @@ def parse_level(tile_sec, grid_tiles, lvl_width, lvl_height, tileset, file, over
 
     save_tilemap_to_file(tile_arr, tile_sec*64, lvl_width, lvl_height, file)
     return(tile_arr)
+
+
+class entity:
+    def __init__(self, obj_ref, x, y, is_right):
+        self.obj_ref = obj_ref
+        self.x = x
+        self.y = y
+        self.is_right = is_right
+
+def find_entity_field(entity_fields, key):
+    for field in entity_fields:
+        if(field["__identifier"] == key):
+            return(field)
+    else:
+        return(None)
+
+def parse_entities(entities, lvl_width, lvl_height, file):
+    obj_arr = []
+    obj_ind_arr = []
+
+    if(lvl_width >= lvl_height):
+        arr_size = lvl_width
+    else: 
+        arr_size = lvl_height
+
+    for i in range(arr_size):
+        obj_arr.append([])
+        obj_ind_arr.append(0)
+        for j in range(OBJS_PER_CHUNK):
+            obj_arr[i].append(entity(0,0,0,True))
+
+    for entity_inst in entities["entityInstances"]:
+        if(lvl_width >= lvl_height):
+            arr_ind = int(entity_inst["__grid"][0]/2)
+        else:
+            arr_ind = int(entity_inst["__grid"][1]/2)
+        obj_arr[arr_ind][obj_ind_arr[arr_ind]].obj_ref = find_entity_field(entity_inst["fieldInstances"], "objRef")["__value"]
+        obj_arr[arr_ind][obj_ind_arr[arr_ind]].is_right = find_entity_field(entity_inst["fieldInstances"], "isRight")["__value"]
+        obj_arr[arr_ind][obj_ind_arr[arr_ind]].x = int(entity_inst["px"][0]/2)
+        obj_arr[arr_ind][obj_ind_arr[arr_ind]].y = int(entity_inst["px"][1]/2)
+
+        obj_ind_arr[arr_ind] += 1
+
+    spawn_id = 1
+    for chunk in obj_arr:
+        for i in range(OBJS_PER_CHUNK):
+            entity_inst = chunk[i]
+            if(entity_inst.obj_ref != 0):
+                file.write(entity_inst.obj_ref.to_bytes(1, "little"))
+                file.write(entity_inst.x.to_bytes(2, "little"))
+                file.write(entity_inst.y.to_bytes(2, "little"))
+                file.write(spawn_id.to_bytes(1, "little"))
+                spawn_id += 1
+            else:
+                file.write((0).to_bytes(6, "little"))
     
 
 with open(asset_path, "r") as f:
@@ -136,11 +192,14 @@ with open(full_filename, "wb") as info_file:
         
         if(lvl_width < lvl_height):
             num_of_rooms = int(lvl_height / 16)
+            spawn_byte_size = lvl_width * OBJS_PER_CHUNK * 5
         else:
             num_of_rooms = int(lvl_width / 16)
+            spawn_byte_size = lvl_width * OBJS_PER_CHUNK * 5
 
         info_file.write(lvl_byte_size.to_bytes(2,"little"))
         info_file.write(col_byte_size.to_bytes(2,"little"))
+        info_file.write((0).to_bytes(2,"little"))
         info_file.write(num_of_rooms.to_bytes(1,"little"))
 
         enter_dir = dir_arr.index(level["fieldInstances"][0]["__value"])
@@ -153,10 +212,19 @@ with open(full_filename, "wb") as info_file:
         else: no_of_secs = math.ceil(lvl_height/64)
 
         info_file.write(no_of_secs.to_bytes(1,"little"))
+        # info_file.write(spawn_byte_size.to_bytes(2,"little"))
 
-        layer0 = level["layerInstances"][2]
-        layer1 = level["layerInstances"][1]
-        layer1_edit = level["layerInstances"][0]
+        layer0 = level["layerInstances"][3]
+        layer1 = level["layerInstances"][2]
+        layer1_edit = level["layerInstances"][1]
+
+
+        entities = level["layerInstances"][0]
+        full_filename = filename + "S" + str(i).zfill(2) + extension
+        with open(full_filename, "wb") as f:
+            f.write((0).to_bytes(2, "little"))
+            parse_entities(entities, lvl_width, lvl_height, f)
+
 
         for j in range(no_of_secs):
             #create file for layer0 and layer1

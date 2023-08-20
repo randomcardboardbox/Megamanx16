@@ -53,6 +53,10 @@ void main(void) {
     g_init_lvl();
     load_map_data();
 
+    for(index=0; index<16; index++){
+        spawn_check(index);
+    }
+
     for(index=0; index<32; index++){                        // transfer mapbase data into vram
         RAM_BANK_SEL = 1;
         _load_vert_map_sect(0, 64, 0, index, tile_map0_ram_addr, map_l0_vram_addr);
@@ -62,17 +66,11 @@ void main(void) {
 
     megaman_obj.x = 100;
     megaman_obj.y = 100;
-
-    obj_ind = alloc_obj();
-    objects[obj_ind].x = 204;
-    objects[obj_ind].y = 150;
-    objects[obj_ind].obj_type_ref = 1;
-    objects[obj_ind].spr_ind = alloc_sprites(object_defs[1].num_of_sprs);
-    objects[obj_ind].var1 = 0;
     
     while(1){
         update_megaman();
-        update_objs();
+        // update_objs();
+        _update_objects(&objects[0], &object_defs[0]);
 
         _wait_for_nmi();
         set_scroll();

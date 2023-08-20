@@ -2671,7 +2671,10 @@
 							"defUid": 133,
 							"px": [424,296],
 							"fieldInstances": [
-								{ "__identifier": "isRight", "__type": "Bool", "__value": true, "__tile": null, "defUid": 138, "realEditorValues": [] },
+								{ "__identifier": "isRight", "__type": "Bool", "__value": false, "__tile": null, "defUid": 138, "realEditorValues": [{
+									"id": "V_Bool",
+									"params": [ false ]
+								}] },
 								{ "__identifier": "objRef", "__type": "Int", "__value": 1, "__tile": null, "defUid": 139, "realEditorValues": [] }
 							]
 						},
@@ -2688,7 +2691,10 @@
 							"defUid": 133,
 							"px": [680,168],
 							"fieldInstances": [
-								{ "__identifier": "isRight", "__type": "Bool", "__value": true, "__tile": null, "defUid": 138, "realEditorValues": [] },
+								{ "__identifier": "isRight", "__type": "Bool", "__value": false, "__tile": null, "defUid": 138, "realEditorValues": [{
+									"id": "V_Bool",
+									"params": [ false ]
+								}] },
 								{ "__identifier": "objRef", "__type": "Int", "__value": 1, "__tile": null, "defUid": 139, "realEditorValues": [] }
 							]
 						}
