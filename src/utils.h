@@ -29,6 +29,9 @@ extern void _init_irq_handler(void);
 extern int _get_joystick_state(void);
 
 extern void _force_halt(void);
+extern void _play_obj_anim_frame(int x_off, int y_off, char pal_off, int spr_addr_off, int base_addr, char no_of_sprs, int VRAM_sprattr);
+extern void _update_obj_pos(int x, int y, char pal_off, int base_addr, char no_of_sprs, int VRAM_sprattr);
+extern void _play_obj_anim(void);
 
 // Function Definitions:
 
@@ -36,9 +39,10 @@ char alloc_sprites(char size);
 void dealloc_sprites(char index);
 
 void play_anim_frame(struct MegamanStruct *obj);
-void play_obj_anim_frame(struct ObjectStruct *obj);
+void play_obj_anim_frame(char obj_ind);
+
 void play_anim(char num_of_frames, char *anim_ram_addr, struct MegamanStruct *obj);
-void play_obj_anim(char num_of_frames, char *anim_ram_addr, struct ObjectStruct *obj);
+void play_obj_anim(char num_of_frames, char *anim_ram_addr, char obj_ind);
 
 void load_map_data();
 

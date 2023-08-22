@@ -24,13 +24,16 @@ struct ObjectStruct
     char anim_index;
     char spr_ind;
 
-    int timer1;
-    int timer2;
-    int timer3;
+    unsigned int timer1;
+    unsigned int timer2;
+    unsigned int timer3;
 
     char var1;
     char var2;
     char var3;
+
+    void (*update_ptr)(char);
+    void (*draw_ptr)(char);
 };
 
 struct ObjectReferenceStruct
@@ -47,7 +50,6 @@ struct ObjectReferenceStruct
     char height;
 };
 
-void update_objs(void);
 void draw_objs(void);
 char alloc_obj();
 void dealloc_obj(char obj_ind);
@@ -57,6 +59,8 @@ void empty_obj_func(char obj_ind);
 void spawn_check(int chunk);
 void check_despawn(char obj_ind);
 
-extern void _update_objects(int obj_arr_addr, int obj_def_addr);
+extern void _update_objects(int obj_arr_addr, int scroll_x, void (*dealloc_func)(char));
+extern void _draw_objects(void (*draw_func)(char), int obj_arr_addr);
+
 
 #endif//OBJECT

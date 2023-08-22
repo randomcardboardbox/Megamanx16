@@ -71,6 +71,11 @@ ZP_PTR_3          = $24
 ZP_PTR_4          = $26
 ZP_PTR_5          = $28
 ZP_PTR_6          = $30
+ZP_PTR_7          = $32
+ZP_PTR_8          = $34
+ZP_PTR_9          = $36
+ZP_PTR_10          = $38
+ZP_PTR_11          = $40
 
 ; I/O Registers
 VERA_addr_low     = $9F20

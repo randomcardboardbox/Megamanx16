@@ -124,9 +124,6 @@ __m_apply_velocity:
     lda (OBJ_ADDR), y
     sbc #0
     sta (OBJ_ADDR), y
-    
-    ; sta $0040
-    ; brk
 
     @add_y_vel:
     ;adding y velocity
@@ -231,3 +228,141 @@ __m_apply_velocity:
 
     @end_sub:
     rts
+
+
+OBJ_X = 0
+FRAC_X = 2
+OBJ_Y = 3
+FRAC_Y = 5
+
+X_VEL = 6
+X_FRAC_VEL = 7
+Y_VEL = 8
+Y_FRAC_VEL = 9
+
+HEALTH = 10
+STATUS = 11
+
+
+ANIM_TIMER = 12
+FRAME = 14
+ANIM_INDEX = 15
+ANIM_ADDR = 16
+NO_OF_SPRS = 18
+SPR_IND = 19
+
+; ; _play_obj_anim_frame(int base_addr, int obj, char no_of_sprs, int VRAM_sprattr)
+; __play_anim_frame:
+;     ; set up vram data port
+;     stz VERA_ctrl
+
+;     sta VERA_addr_low
+;     stx VERA_addr_high
+
+;     lda #%00010001
+;     sta VERA_addr_bank
+
+;     ; storing arguments into zero page
+;     lda (sp)
+;     sta NO_OF_SPRS
+;     inc sp
+
+;     lda (sp)
+;     sta OBJECT_ADDR
+;     inc sp
+;     lda (sp)
+;     sta OBJECT_ADDR+1
+;     inc sp
+
+;     lda (sp)
+;     sta BASE_ADDR
+;     inc sp
+;     lda (sp)
+;     sta BASE_ADDR+1
+;     inc sp
+
+
+;     ; store sprite offset data
+;     lda (sp)
+;     lsr
+;     sta SPR_OFF_VAR
+;     inc sp
+
+;     lda (sp)
+;     pha
+;     lsr
+;     sta SPR_OFF_VAR+1
+
+;     pla
+;     asl
+;     asl
+;     asl
+;     asl
+;     asl
+;     asl
+;     asl
+;     ora SPR_OFF_VAR
+;     sta SPR_OFF_VAR
+;     inc sp
+
+
+;     lda (sp)
+;     sta PAL_OFF
+;     inc sp
+
+
+;     ; setting x coords
+    
+
+;     ldx NO_OF_SPRS
+;     @loop_over_sprs:
+
+;     ldy #0
+;     @loop_over_attrs:
+;     lda (BASE_ADDR)
+
+
+;     cpy #0
+;     beq @spr_off_low
+;     cpy #1
+;     beq @spr_off_high
+;     cpy #7
+;     beq @pal_offset
+
+;     bra @continue_loop
+
+;     @pal_offset:
+;     ora PAL_OFF
+;     bra @continue_loop
+    
+;     @spr_off_low:
+;     clc 
+;     adc SPR_OFF_VAR
+;     php
+;     bra @continue_loop
+
+;     @spr_off_high:
+;     plp
+;     adc SPR_OFF_VAR+1
+;     bra @continue_loop
+
+
+;     @continue_loop:
+;     sta VERA_data0
+    
+;     inc BASE_ADDR
+;     bne @leave_to_high_byte_unchanged
+;     inc BASE_ADDR+1
+;     @leave_to_high_byte_unchanged:
+
+    
+;     iny
+;     cpy #8
+;     bne @loop_over_attrs
+
+
+;     dex
+;     cpx #0
+;     bne @loop_over_sprs
+
+;     rts

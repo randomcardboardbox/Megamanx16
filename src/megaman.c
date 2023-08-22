@@ -115,6 +115,9 @@ void update_megaman(){
     int term_vel = 10;
     int old_pos_x = megaman_obj.x;
     int joystick = _get_joystick_state();
+    char m_run_anim[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14};
+    char is_reverse = 0;
+    int i=0;
 
     megaman_obj.x_vel = 0;
     megaman_obj.x_frac_vel = 0;
@@ -150,12 +153,8 @@ void update_megaman(){
     _m_apply_velocity(&megaman_obj);
     check_collision();
     curr_room = megaman_obj.x>>8;
-}
 
-void animate_megaman(){
-    char m_run_anim[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14};
-    char is_reverse = 0;
-    int i=0;
+
 
     if((megaman_obj.status & 0b00000010) == 0){
         is_reverse = 1;
@@ -165,9 +164,12 @@ void animate_megaman(){
         play_anim(14, m_run_anim, &megaman_obj);
     }
     else{
-        play_anim_frame(&megaman_obj);
         megaman_obj.frame = 0;
         megaman_obj.anim_timer = 0;
         megaman_obj.anim_index = 0;
     }
+}
+
+void animate_megaman(){
+    play_anim_frame(&megaman_obj);
 }

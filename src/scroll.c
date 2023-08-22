@@ -82,9 +82,6 @@ void load_new_room_ver(){
 
 void load_new_room_hor(){
     lvl_num += 1;
-    tile_map[5] = 0x30+(lvl_num);
-    tile_map2[5] = 0x30+(lvl_num);
-    col_map[5] = 0x30+(lvl_num);
 
     load_map_data();
     // megaman_obj.x = 32;
@@ -132,6 +129,8 @@ void load_new_room_hor(){
 }
 
 void check_room_transition(){
+    // TODO:clear the object array when a new room is loaded
+
     int ent_dir = *(char *)(map_info_addr+(lvl_num*room_data_size)+7);
     int ext_dir = *(char *)(map_info_addr+(lvl_num*room_data_size)+8);
 

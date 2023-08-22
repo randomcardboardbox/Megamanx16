@@ -4,7 +4,6 @@
 #include "utils.h"
 #include "megaman.h"
 #include "scroll.h"
-#include <stdio.h>
 
 #include "object.h"
 #include "gutslvl.h"
@@ -69,13 +68,11 @@ void main(void) {
     
     while(1){
         update_megaman();
-        // update_objs();
-        _update_objects(&objects[0], &object_defs[0]);
+        _update_objects(objects, scroll_x, &dealloc_obj);
 
         _wait_for_nmi();
         set_scroll();
         animate_megaman();
-        draw_objs();
-
+        _draw_objects(&play_obj_anim_frame, objects);
     }
 }

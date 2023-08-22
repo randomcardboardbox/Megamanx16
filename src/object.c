@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "object.h"
 #include "globals.h"
 #include "utils.h"
@@ -32,30 +30,12 @@ void dealloc_obj(char obj_ind){
     spawned_objs_table[objects[obj_ind].spawn_id] = 0;
 
     objects[obj_ind] = object;
+    objects[obj_ind].obj_type_ref = 0;
     obj_alloc_table[obj_ind] = 0;
-}
-
-void update_objs(void){
-    char i = 0;
-    struct ObjectStruct object;
-
-    for(i=0; i<no_of_objs; i++){
-        if(obj_alloc_table[i] == 0){
-            continue; }
-
-        object_defs[objects[i].obj_type_ref].update_ptr(i);
-
-        if(objects[i].timer1 != 0){ objects[i].timer1 -= 1;}
-        if(objects[i].timer2 != 0){ objects[i].timer2 -= 1;}
-        if(objects[i].timer3 != 0){ objects[i].timer3 -= 1;}
-
-        check_despawn(i);
-    }
 }
 
 void draw_objs(void){
     char i = 0;
-    struct ObjectStruct object;
 
     for(i=0; i<no_of_objs; i++){
         if(obj_alloc_table[i] == 0){
@@ -87,24 +67,12 @@ void spawn_check(int chunk){
             objects[obj_ind].obj_type_ref = obj_ref;
             objects[obj_ind].spr_ind = alloc_sprites(object_defs[obj_ref].num_of_sprs);
             objects[obj_ind].spawn_id = spawn_id;
+            objects[obj_ind].draw_ptr = object_defs[obj_ref].draw_ptr;
+            objects[obj_ind].update_ptr = object_defs[obj_ref].update_ptr;
             spawned_objs_table[spawn_id] = 1;
         }
     }
 }
-
-void check_despawn(char obj_ind){
-    struct ObjectStruct *obj = &objects[obj_ind];
-    int dif_x = (obj->x - scroll_x/2) >> 1;
-    int dif_x_sq = dif_x*dif_x;
-
-    int dif_y = (obj->y - scroll_y/2) >> 1;
-    int dif_y_sq = dif_y*dif_y;
-
-    if(dif_x_sq > 17000 || dif_y_sq > 17000){
-        dealloc_obj(obj_ind);
-    }    
-}
-
 
 int _dis_to_megaman(struct ObjectStruct *obj){
     int x_dis = (obj->x - megaman_obj.x) >> 1;

@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <stdio.h>
 
 #include "globals.h"
 #include "utils.h"
@@ -57,40 +56,28 @@ void play_anim_frame(struct MegamanStruct *obj){
     if(!(obj->status & 0b00000010)){ is_reverse = 1; }
     base_addr = (obj->anim_addr+3)+(is_reverse*8*obj->num_of_sprs)+(2+16*obj->num_of_sprs)*obj->frame;
 
-    for (i=0; i<obj->num_of_sprs; i++){
-        _transfer_spr_attr_to_vram(0, 0, x, y, base_addr+(8*i), 1, &VRAM_sprattr+(8*(i+obj->spr_ind)));
-    }
+    _play_obj_anim_frame(x, y, 0, 0, base_addr, obj->num_of_sprs, 0xFC00+(obj->spr_ind*8));
 }
 
-void play_obj_anim_frame(struct ObjectStruct *obj){
-    int anim_addr = object_defs[obj->obj_type_ref].anim_addr;
-    int num_of_sprs = object_defs[obj->obj_type_ref].num_of_sprs;
-    int spr_addr = object_defs[obj->obj_type_ref].spr_addr;
-    int pal_off = object_defs[obj->obj_type_ref].pal_off;
-
-    int width = object_defs[obj->obj_type_ref].width;
-    int height = object_defs[obj->obj_type_ref].height;
-
-    int spr_ind = obj->spr_ind;
-
+void play_obj_anim_frame(char obj_ind){
+    struct ObjectStruct *obj = &objects[obj_ind];
     char is_reverse = 0;
-    int i=0;
-    int x = ((((obj->x<<1) | (obj->frac_x>>7)) - width)-scroll_x);
-    int y = ((((obj->y<<1) | (obj->frac_y>>7)) - height)-scroll_y);
+    int base_addr;
+
+    int x = ((obj->x<<1) | (obj->frac_x>>7)) - object_defs[obj->obj_type_ref].width - scroll_x;
+    int y = ((obj->y<<1) | (obj->frac_y>>7)) - object_defs[obj->obj_type_ref].height - scroll_y;
 
     if(x < 512 & y < 512 & x > -64 & y > -64){
-        int base_addr;
 
         if(!(obj->status & 0b00000010)){ is_reverse = 1; }
-        base_addr = (anim_addr+3)+(is_reverse*8*num_of_sprs)+(2+16*num_of_sprs)*obj->frame;
-
-        for (i=0; i<num_of_sprs; i++){
-            _transfer_spr_attr_to_vram(pal_off, spr_addr, x, y, base_addr+(8*i), 1, &VRAM_sprattr+(8*(i+obj->spr_ind)));
-        }
+        base_addr = (object_defs[obj->obj_type_ref].anim_addr+3)+(is_reverse*8*object_defs[obj->obj_type_ref].num_of_sprs)+(2+16*object_defs[obj->obj_type_ref].num_of_sprs)*obj->frame;
+        _play_obj_anim_frame(x, y, object_defs[obj->obj_type_ref].pal_off, object_defs[obj->obj_type_ref].spr_addr, base_addr, object_defs[obj->obj_type_ref].num_of_sprs, 0xFC00+(obj->spr_ind*8));
     }
 }
 
-void play_obj_anim(char num_of_frames, char *anim_ram_addr, struct ObjectStruct *obj){
+void play_obj_anim(char num_of_frames, char *anim_ram_addr, char obj_ind){
+    struct ObjectStruct *obj = &objects[obj_ind];
+    
     int anim_addr = object_defs[obj->obj_type_ref].anim_addr;
     char num_of_sprs = object_defs[obj->obj_type_ref].num_of_sprs;
     char *frame_count_addr;
@@ -109,6 +96,14 @@ void play_obj_anim(char num_of_frames, char *anim_ram_addr, struct ObjectStruct 
     }
     
     obj->anim_timer -= 1;
+
+
+
+    // obj->frame = anim_ram_addr[obj->anim_index];
+    // char *frame_count_addr = (object_defs[obj->obj_type_ref].anim_addr+1)+
+    //                         (2+16*object_defs[obj->obj_type_ref].num_of_sprs) * (obj->frame);
+
+
 }
 
 void play_anim(char num_of_frames, char *anim_ram_addr, struct MegamanStruct *obj){
@@ -125,10 +120,10 @@ void play_anim(char num_of_frames, char *anim_ram_addr, struct MegamanStruct *ob
 
         frame_count_addr = (obj->anim_addr+1)+(2+16*obj->num_of_sprs) * obj->frame;
         obj->anim_timer = *frame_count_addr;
+        // play_anim_frame(obj);
     }
     
     obj->anim_timer -= 1;
-    play_anim_frame(obj);
 }
 
 char get_pressed(int joystick, int button){
@@ -141,6 +136,11 @@ char get_pressed(int joystick, int button){
 void load_map_data(){
     char no_of_secs = *(int *)(map_info_addr+(lvl_num*room_data_size)+9);
     char i = 0;
+
+    tile_map[5] = 0x30+(lvl_num);
+    tile_map2[5] = 0x30+(lvl_num);
+    col_map[5] = 0x30+(lvl_num);
+    spawn_map[5] = 0x30+(lvl_num);
 
     if(coll_data_addr != 0){ free(coll_data_addr); }
     if(spawn_data_addr != 0){ free(spawn_data_addr); }

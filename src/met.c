@@ -2,17 +2,16 @@
 #include "globals.h"
 #include "object.h"
 #include "utils.h"
-#include <stdio.h>
 
 void bullet_update(char obj_ind){
     char anim[] = {0,1,2,3,4,5};
     _m_apply_velocity(&objects[obj_ind]);
-    play_obj_anim(6, anim, &objects[obj_ind]);
+    play_obj_anim(6, anim, obj_ind);
 };
 
 void bullet_draw(char obj_ind){
-    struct ObjectStruct *obj = &objects[obj_ind];
-    play_obj_anim_frame(obj);
+    // struct ObjectStruct *obj = &objects[obj_ind];
+    // play_obj_anim_frame(obj);
 }
 
 void spawn_bullets(struct ObjectStruct *obj){
@@ -38,6 +37,8 @@ void spawn_bullets(struct ObjectStruct *obj){
     objects[obj_ind1].obj_type_ref = 2;
     objects[obj_ind1].spr_ind = alloc_sprites(object_defs[2].num_of_sprs);
     objects[obj_ind1].spawn_id = 0;
+    objects[obj_ind1].update_ptr = object_defs[2].update_ptr;
+    objects[obj_ind1].draw_ptr = object_defs[2].draw_ptr;
 
 
     objects[obj_ind2].y = obj->y+4;
@@ -53,6 +54,8 @@ void spawn_bullets(struct ObjectStruct *obj){
     objects[obj_ind2].obj_type_ref = 2;
     objects[obj_ind2].spr_ind = alloc_sprites(object_defs[2].num_of_sprs);
     objects[obj_ind2].spawn_id = 0;
+    objects[obj_ind2].update_ptr = object_defs[2].update_ptr;
+    objects[obj_ind2].draw_ptr = object_defs[2].draw_ptr;
 
 
 
@@ -69,11 +72,13 @@ void spawn_bullets(struct ObjectStruct *obj){
     objects[obj_ind3].obj_type_ref = 2;
     objects[obj_ind3].spr_ind = alloc_sprites(object_defs[2].num_of_sprs);
     objects[obj_ind3].spawn_id = 0;
+    objects[obj_ind3].update_ptr = object_defs[2].update_ptr;
+    objects[obj_ind3].draw_ptr = object_defs[2].draw_ptr;
 }
 
 void met_draw(char obj_ind){
     struct ObjectStruct *obj = &objects[obj_ind];
-    play_obj_anim_frame(obj);
+    // play_obj_anim_frame(obj);
 }
 
 void met_update(char obj_ind){
@@ -88,19 +93,21 @@ void met_update(char obj_ind){
     int dis_from_mm;
     struct ObjectStruct *obj = &objects[obj_ind];
 
+    // play_obj_anim_frame(obj_ind);
+
     if(obj->var1 == 0){
         if(obj->timer1 == 0){
             dis_from_mm = _dis_to_megaman(obj);
-            if(dis_from_mm < 200){
+            // if(dis_from_mm < 200){
                 obj->var1 = 1;
                 obj->anim_index = 0;
                 obj->anim_timer = 0;
-            }
+            // }
         }
         obj->frame = 0;
     }
     else if(obj->var1 == 1){
-        play_obj_anim(9, m_open_anim, &objects[obj_ind]);
+        play_obj_anim(9, m_open_anim, obj_ind);
         if(obj->anim_index == 8){
             obj->var1 = 2;
             obj->timer1 = 10;
@@ -125,7 +132,7 @@ void met_update(char obj_ind){
         }
     }
     else if(obj->var1 == 3){
-        play_obj_anim(6, m_close_anim, &objects[obj_ind]);
+        play_obj_anim(6, m_close_anim, obj_ind);
         if(obj->anim_index == 5){
             obj->var1 = 0;
             obj->timer1 = 45;

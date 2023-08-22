@@ -125,9 +125,9 @@ def parse_entities(entities, lvl_width, lvl_height, file):
     obj_ind_arr = []
 
     if(lvl_width >= lvl_height):
-        arr_size = lvl_width
+        arr_size = lvl_width+1
     else: 
-        arr_size = lvl_height
+        arr_size = lvl_height+1
 
     for i in range(arr_size):
         obj_arr.append([])
