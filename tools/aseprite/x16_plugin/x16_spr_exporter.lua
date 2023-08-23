@@ -292,7 +292,14 @@ function call_exporter()
                 end
             else    
                 -- for smart tile division
-                tiles = find_tiles(cel.image)[2]
+                local tile_sizes = {8,16,32,64}
+                local start_size = 1
+                if(dialog.data.spr_width == "8")then start_size = 1 end
+                if(dialog.data.spr_width == "16")then start_size = 2 end
+                if(dialog.data.spr_width == "32")then start_size = 3 end
+                if(dialog.data.spr_width == "64")then start_size = 4 end
+
+                tiles = find_tiles(cel.image, start_size)[2]
                 num_spr_tiles = #tiles
                 for t_ind=1, #tiles, 1 do
                     tile = tiles[t_ind]

@@ -11,22 +11,26 @@ char alloc_sprites(char size){
     int j=0;
     int init_ind=0;
 
-    for (i=0; i<(127-size); i++){
+    for (i=0; i<(129-size); i++){
         if(spr_alloc_table[i] != 0){
             init_ind = i+1;
         }
-        if((i-init_ind)==(size)){
-            spr_alloc_table[init_ind] = size;
-            for (j=1; j<size; j++){
-                spr_alloc_table[init_ind+j] = 1;
+        else{
+            if((i-init_ind)==(size+1)){
+                spr_alloc_table[init_ind] = size;
+                for (j=1; j<size; j++){
+                    spr_alloc_table[init_ind+j] = 1;
+                }
+                return(init_ind);
             }
-            return(init_ind);
         }
     }
 
-    spr_alloc_table[127-size] = size;
+    // dealloc_sprites(128-size)
+
+    spr_alloc_table[128-size] = size;
     for (j=1; j<size; j++){
-        spr_alloc_table[(127-size)+j] = 1;
+        spr_alloc_table[(128-size)+j] = 1;
     }
     return(127-size);
 }
@@ -34,9 +38,9 @@ char alloc_sprites(char size){
 void dealloc_sprites(char index){
     int i=0;
     int size=spr_alloc_table[index];
-    if(size == 0){
-        size = 1;
-    }
+    // if(size == 0){
+    //     size = 1;
+    // }
 
     for (i=0; i<size; i++){
         spr_alloc_table[index+i] = 0;

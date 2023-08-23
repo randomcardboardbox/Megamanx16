@@ -66,7 +66,16 @@ end
 function update_image() 
     if(app.frame) then
         local new_img = get_image()
-        tile_arr = find_tiles(image)
+
+        local plugin_key = "randomcardboardbox/x16_exporter"
+        local start_size = 1
+        
+        if(app.sprite.properties(plugin_key).spr_width == "8") then start_size = 1 end
+        if(app.sprite.properties(plugin_key).spr_width == "16") then start_size = 2 end
+        if(app.sprite.properties(plugin_key).spr_width == "32") then start_size = 3 end
+        if(app.sprite.properties(plugin_key).spr_width == "64") then start_size = 4 end
+        
+        tile_arr = find_tiles(image, start_size)
         tiles = tile_arr[1]
         meta_tiles = tile_arr[2]
         curr_frame = app.frame.frameNumber

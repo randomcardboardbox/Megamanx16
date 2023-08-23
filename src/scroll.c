@@ -147,6 +147,14 @@ void check_room_transition(){
 }
 
 void set_scroll(){
+    L0_HSCROLL = scroll_x;
+    L1_HSCROLL = scroll_x;
+
+    L0_VSCROLL = scroll_y;
+    L1_VSCROLL = scroll_y;
+}
+
+void calc_scroll(){
     int scroll_block;
     int megaman_pos = (megaman_obj.x << 1) | megaman_obj.frac_x >> 7;
     int ram_sec_f = 0;
@@ -167,9 +175,6 @@ void set_scroll(){
     scroll_block = scroll_x >> 4;
     ram_sec_f = ((scroll_x+496) / 2048)*2;
     ram_sec_b = (scroll_x / 2048)*2;
-
-    L0_HSCROLL = scroll_x;
-    L1_HSCROLL = scroll_x;
 
     if(old_scroll_block < scroll_block){
         if(scroll_block%2 == 0){

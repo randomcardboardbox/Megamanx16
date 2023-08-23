@@ -112,7 +112,7 @@ function edit_tile_map(tiles, spr)
     end
 end
 
-function find_tiles(spr)
+function find_tiles(spr, start_size)
     local tile_sizes = {8,16,32,64}
     local tile_sequences = {{64, 64}, {64, 32}, {32, 64}, {32, 32}, 
                         {64, 16}, {16, 64}, {32, 16}, {16, 32}, 
@@ -121,16 +121,16 @@ function find_tiles(spr)
 
     local tiles = {}
 
-    local grid_size_x = math.ceil(spr.width/tile_sizes[1])
-    local grid_size_y = math.ceil(spr.height/tile_sizes[1])
+    local grid_size_x = math.ceil(spr.width/tile_sizes[start_size])
+    local grid_size_y = math.ceil(spr.height/tile_sizes[start_size])
 
     for i=0, grid_size_x-1, 1 do
         for j=0, grid_size_y-1, 1 do
             new_tile = {
-                i*tile_sizes[1],
-                j*tile_sizes[1],
-                tile_sizes[1],
-                tile_sizes[1],
+                i*tile_sizes[start_size],
+                j*tile_sizes[start_size],
+                tile_sizes[start_size],
+                tile_sizes[start_size],
             }
 
             table.insert(tiles, new_tile)
@@ -141,8 +141,8 @@ function find_tiles(spr)
     local max_tile_offset_x = 0
     local max_tile_offset_y = 0
 
-    local offset_range_x = math.min(tile_sizes[1]-1, (grid_size_x*tile_sizes[1]) - spr.width - 1)
-    local offset_range_y = math.min(tile_sizes[1]-1, (grid_size_y*tile_sizes[1]) - spr.height - 1)
+    local offset_range_x = math.min(tile_sizes[start_size]-1, (grid_size_x*tile_sizes[start_size]) - spr.width - 1)
+    local offset_range_y = math.min(tile_sizes[start_size]-1, (grid_size_y*tile_sizes[start_size]) - spr.height - 1)
 
     for j=0, -offset_range_y+1, -1 do
         for i=0, -offset_range_x+1, -1 do
@@ -169,8 +169,8 @@ function find_tiles(spr)
 
     for t_ind=1, #tiles, 1 do
         local tile = tiles[t_ind]
-        x_pos = math.floor((tile[1] - max_tile_offset_x) / tile_sizes[1])
-        y_pos = math.floor((tile[2] - max_tile_offset_y) / tile_sizes[1])
+        x_pos = math.floor((tile[1] - max_tile_offset_x) / tile_sizes[start_size])
+        y_pos = math.floor((tile[2] - max_tile_offset_y) / tile_sizes[start_size])
 
         tile_2d_arr[y_pos+1][x_pos+1] = 1
     end
@@ -179,54 +179,57 @@ function find_tiles(spr)
         local meta_tile_size_x = tile_sequences[k][1]
         local meta_tile_size_y = tile_sequences[k][2]
 
-        local tile_ratio_x = math.floor(meta_tile_size_x / tile_sizes[1])
-        local tile_ratio_y = math.floor(meta_tile_size_y / tile_sizes[1])
+        local tile_ratio_x = math.floor(meta_tile_size_x / tile_sizes[start_size])
+        local tile_ratio_y = math.floor(meta_tile_size_y / tile_sizes[start_size])
 
-        local meta_grid_size_x = math.floor(grid_size_x*(tile_sizes[1] / meta_tile_size_x))
-        local meta_grid_size_y = math.floor(grid_size_y*(tile_sizes[1] / meta_tile_size_y))
+        if(tile_ratio_x >= 1 and tile_ratio_y >= 1) then
 
-        local meta_tile_arr = {}
-        for j=0, meta_grid_size_y-1, 1 do
-            for i=0, meta_grid_size_x-1, 1 do
-                table.insert(meta_tile_arr, {
-                        i*tile_ratio_x,
-                        j*tile_ratio_y,
-                        tile_ratio_x,
-                        tile_ratio_y})
-            end
-        end
+            local meta_grid_size_x = math.floor(grid_size_x*(tile_sizes[start_size] / meta_tile_size_x))
+            local meta_grid_size_y = math.floor(grid_size_y*(tile_sizes[start_size] / meta_tile_size_y))
 
-        local offset_range_x = math.floor(math.min((meta_tile_size_x / tile_sizes[1])-1, grid_size_x - (meta_tile_size_x / tile_sizes[1])))
-        local offset_range_y = math.floor(math.min((meta_tile_size_y / tile_sizes[1])-1, grid_size_y - (meta_tile_size_y / tile_sizes[1])))
-
-        local meta_tile_offset_x = 0
-        local meta_tile_offset_y = 0
-        local max_full_tiles = 0
-        
-        for j=0, offset_range_y, 1 do
-            for i=0, offset_range_x, 1 do
-                num_f_tiles = num_full_tiles(meta_tile_arr, tile_2d_arr, i,j)
-                if(num_f_tiles > max_full_tiles) then
-                    max_full_tiles = num_f_tiles
-                    meta_tile_offset_x = i
-                    meta_tile_offset_y = j
+            local meta_tile_arr = {}
+            for j=0, meta_grid_size_y-1, 1 do
+                for i=0, meta_grid_size_x-1, 1 do
+                    table.insert(meta_tile_arr, {
+                            i*tile_ratio_x,
+                            j*tile_ratio_y,
+                            tile_ratio_x,
+                            tile_ratio_y})
                 end
             end
-        end
-        
-        remove_full_space(meta_tile_arr, tile_2d_arr, meta_tile_offset_x, meta_tile_offset_y)
+
+            local offset_range_x = math.floor(math.min((meta_tile_size_x / tile_sizes[start_size])-1, grid_size_x - (meta_tile_size_x / tile_sizes[start_size])))
+            local offset_range_y = math.floor(math.min((meta_tile_size_y / tile_sizes[start_size])-1, grid_size_y - (meta_tile_size_y / tile_sizes[start_size])))
+
+            local meta_tile_offset_x = 0
+            local meta_tile_offset_y = 0
+            local max_full_tiles = 0
+            
+            for j=0, offset_range_y, 1 do
+                for i=0, offset_range_x, 1 do
+                    num_f_tiles = num_full_tiles(meta_tile_arr, tile_2d_arr, i,j)
+                    if(num_f_tiles > max_full_tiles) then
+                        max_full_tiles = num_f_tiles
+                        meta_tile_offset_x = i
+                        meta_tile_offset_y = j
+                    end
+                end
+            end
+            
+            remove_full_space(meta_tile_arr, tile_2d_arr, meta_tile_offset_x, meta_tile_offset_y)
 
 
-        for mt_ind=1, #meta_tile_arr, 1 do
-            meta_tile = meta_tile_arr[mt_ind]
-            edit_tile_map(meta_tile, tile_2d_arr)
+            for mt_ind=1, #meta_tile_arr, 1 do
+                meta_tile = meta_tile_arr[mt_ind]
+                edit_tile_map(meta_tile, tile_2d_arr)
 
-            table.insert(meta_tiles, {
-                meta_tile[1]*tile_sizes[1]+max_tile_offset_x,
-                meta_tile[2]*tile_sizes[1]+max_tile_offset_y,
-                tile_ratio_x*tile_sizes[1],
-                tile_ratio_y*tile_sizes[1]
-            })
+                table.insert(meta_tiles, {
+                    meta_tile[1]*tile_sizes[start_size]+max_tile_offset_x,
+                    meta_tile[2]*tile_sizes[start_size]+max_tile_offset_y,
+                    tile_ratio_x*tile_sizes[start_size],
+                    tile_ratio_y*tile_sizes[start_size]
+                })
+            end
         end
     end
 

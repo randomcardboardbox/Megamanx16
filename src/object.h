@@ -41,7 +41,7 @@ struct ObjectReferenceStruct
     void (*update_ptr)(char);
     void (*draw_ptr)(char);
     char upadte_func_bank;
-    char udraw_func_bank;
+    char draw_func_bank;
     int anim_addr;
     int spr_addr;
     char num_of_sprs;

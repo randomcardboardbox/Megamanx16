@@ -4,7 +4,7 @@
 #include "object.h"
 #include "megaman.h"
 
-#define no_of_objs 50
+#define no_of_objs 30
 
 extern int scroll_x;
 extern int scroll_y;

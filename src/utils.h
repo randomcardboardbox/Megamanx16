@@ -95,6 +95,7 @@ char get_pressed(int joystick, int button);
 #define DC_BORDER (*(char *)0x9F2C)
 
 #define VRAM_sprattr (*(char *)0x1FC00)
+#define VRAM_palette (*(char *)0x1FA00)
 
 #define L0_HSCROLL (*(int *)0x9F30)
 #define L0_VSCROLL (*(int *)0x9F32)

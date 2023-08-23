@@ -307,25 +307,56 @@ __offset_spr_position:
     inc sp
     rts    
 ; _clear_sprite_attribute(char attr_num)
+VERA_ADDR = ZP_PTR_11
 __clear_sprite_attribute:
     stz VERA_ctrl
+
     clc
     asl
+    sta VERA_ADDR
+    lda #0
+    rol 
+    sta VERA_ADDR+1
+
+    clc
+    lda VERA_ADDR
     asl
+    sta VERA_ADDR
+    lda VERA_ADDR+1
+    rol 
+    sta VERA_ADDR+1
+
+    clc
+    lda VERA_ADDR
     asl
-    adc #<VRAM_sprattr + 6
+    sta VERA_ADDR
+    lda VERA_ADDR+1
+    rol 
+    sta VERA_ADDR+1
+    
+
+    lda #<(VRAM_sprattr+6)
+    clc
+    adc VERA_ADDR
     sta VERA_addr_low
     
-    lda #0
-    adc #>(VRAM_sprattr)
+    lda VERA_ADDR+1
+    adc #>(VRAM_sprattr+6)
     sta VERA_addr_high
 
     lda #%00000001
     sta VERA_addr_bank
 
-    lda VERA_data0
-    and #%00001100
+    ; lda VERA_data0
+    ; and #%00001100
     stz VERA_data0
+    ; stz VERA_data0
+    ; stz VERA_data0
+    ; stz VERA_data0
+    ; stz VERA_data0
+    ; stz VERA_data0
+    ; stz VERA_data0
+    ; stz VERA_data0
 
     rts
 

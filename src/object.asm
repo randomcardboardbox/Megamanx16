@@ -9,7 +9,7 @@
 
 ; _update_objects(int obj_arr_addr, int obj_def_addr, int scrollx, int func_addr)
 
-NO_OF_OBJs = 50
+NO_OF_OBJs = 30
 OBJ_BYTE_SIZE = 32
 OBJ_DEF_BYTE_SIZE = 14
 
@@ -148,7 +148,7 @@ __update_objects:
     sec
     sbc SCROLL_X+1
 
-    cmp #3
+    cmp #$3
     bpl @dealloc
     cmp #$FF
     beq @dealloc

@@ -69,10 +69,11 @@ void main(void) {
     while(1){
         update_megaman();
         _update_objects(objects, scroll_x, &dealloc_obj);
+        calc_scroll();
 
         _wait_for_nmi();
         set_scroll();
-        animate_megaman();
         _draw_objects(&play_obj_anim_frame, objects);
+        animate_megaman();
     }
 }

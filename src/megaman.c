@@ -4,6 +4,9 @@
 #include "globals.h"
 #include "scroll.h"
 
+//TODO: reimplement terminal velocity
+//TODO: add gradual deceleration
+
 struct MegamanStruct megaman_obj;
 
 void load_megaman_spr_data(){
@@ -111,42 +114,126 @@ void check_collision(){
     }
 }
 
+char is_holding_jump = 0;
+char was_pressing_a = 0;
+
 void update_megaman(){
-    int term_vel = 10;
+    int term_vel = 100;
     int old_pos_x = megaman_obj.x;
     int joystick = _get_joystick_state();
     char m_run_anim[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14};
     char is_reverse = 0;
     int i=0;
 
-    megaman_obj.x_vel = 0;
-    megaman_obj.x_frac_vel = 0;
-
+    char old_x_frac_vel = megaman_obj.x_frac_vel;
     if(get_pressed(joystick, JOY_RIGHT)){
-        megaman_obj.x_vel = 1;
-        megaman_obj.x_frac_vel = 144;
+        if(megaman_obj.status & 0b00000001){
+            megaman_obj.x_frac_vel += 13;
+            if(megaman_obj.x_vel == 1 && megaman_obj.x_frac_vel > 72){
+                megaman_obj.x_frac_vel = 72;
+            }
+            if(old_x_frac_vel > megaman_obj.x_frac_vel){
+                megaman_obj.x_vel += 1;
+            }
+        }
+        else{
+            megaman_obj.x_vel = 1;
+            megaman_obj.x_frac_vel = 72;
+        }
+
+        
+        if((megaman_obj.status & 0b00000010) == 0){
+            megaman_obj.x_vel = 0;
+            megaman_obj.x_frac_vel = 0;
+        }
+
+
         megaman_obj.status = megaman_obj.status | 0b00000010;
         megaman_obj.status = megaman_obj.status | 0b00000100;
     }
     else if(get_pressed(joystick, JOY_LEFT)){
-        megaman_obj.x_vel = 254;
-        megaman_obj.x_frac_vel = 112;
+        if(megaman_obj.status & 0b00000001){
+            megaman_obj.x_frac_vel += 13;
+            if(megaman_obj.x_vel == 254 && megaman_obj.x_frac_vel > 72){
+                megaman_obj.x_frac_vel = 72;
+            }
+            if(old_x_frac_vel > megaman_obj.x_frac_vel){
+                megaman_obj.x_vel -= 1;
+                megaman_obj.x_frac_vel = 0;
+            }
+        
+        }
+        else{
+            megaman_obj.x_vel = 254;
+            megaman_obj.x_frac_vel = 72;
+        }
+
+        if((megaman_obj.status & 0b00000010) || (megaman_obj.status & 0b00000100)==0){
+            megaman_obj.x_vel = 255;
+            megaman_obj.x_frac_vel = 0;
+        }
+
         megaman_obj.status = megaman_obj.status & 0b11111101;
         megaman_obj.status = megaman_obj.status | 0b00000100;
     }
-    else{ megaman_obj.status = megaman_obj.status & 0b11111011; }
+    else{ 
+        megaman_obj.status = megaman_obj.status & 0b11111011; 
+        megaman_obj.x_vel = 0;
+        megaman_obj.x_frac_vel = 0;
+
+        // if(){
+        //     megaman_obj.x_vel = 0;
+        //     megaman_obj.x_frac_vel = 0;
+        // }
+        // else{
+
+        // }
+    }
     
     if(get_pressed(joystick, JOY_A)){
-        if((megaman_obj.status & 0b00000001)){
-            megaman_obj.y_vel = -10;
-            megaman_obj.y_frac_vel = 0;
+        if((megaman_obj.status & 0b00000001) && was_pressing_a == 0){
+            megaman_obj.y_vel = -6;
+            megaman_obj.y_frac_vel = 200;
+            is_holding_jump = 1;
         }
     }
 
+    was_pressing_a = get_pressed(joystick, JOY_A);
+
     if((megaman_obj.status & 0b00000001) == 0){
-        megaman_obj.y_vel += 1;
-        if(megaman_obj.y_vel < 128 & megaman_obj.y_vel > term_vel){
-            megaman_obj.y_vel = term_vel;
+        char old_y_frac_vel = megaman_obj.y_frac_vel;
+        megaman_obj.y_frac_vel += 70;
+        if(old_y_frac_vel > megaman_obj.y_frac_vel){
+            megaman_obj.y_vel += 1;
+        }
+
+        if(get_pressed(joystick, JOY_A) && is_holding_jump){
+
+            if(megaman_obj.y_vel < 128){
+                is_holding_jump = 0;
+            }
+        }
+        else{
+            char old_y_frac_vel = megaman_obj.y_frac_vel;
+
+            if(!is_holding_jump && megaman_obj.y_vel > 128){
+                megaman_obj.y_frac_vel += 84;
+                megaman_obj.y_vel += 1;
+                if(old_y_frac_vel > megaman_obj.y_frac_vel){
+                    megaman_obj.y_vel += 1;
+                }
+            }
+
+            is_holding_jump = 0;
+
+            // if(megaman_obj.y_vel < 128 & megaman_obj.y_vel > term_vel){
+            //     megaman_obj.y_vel = term_vel;
+            // }
+        }
+    }
+    else{
+        if(megaman_obj.y_vel < 0){
+            is_holding_jump = 0;
         }
     }
 

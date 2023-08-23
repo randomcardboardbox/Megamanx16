@@ -11,6 +11,7 @@ x_vel_frac = ZP_PTR_4
 y_vel = ZP_PTR_5
 y_vel_frac = ZP_PTR_6
 
+; TODO: fix broken fractional logic
 __m_apply_velocity:
     ; 0 - x - low
     ; 1 - x - high
@@ -67,46 +68,36 @@ __m_apply_velocity:
     bra @add_y_vel
 
     @sub_x_vel_frac:
-    lda #$FF
-    sec
-    sbc x_vel_frac
-    sta x_vel_frac
 
     ldy #2
     lda (OBJ_ADDR), y
 
-    sec
-    sbc x_vel_frac
+    clc
+    adc x_vel_frac
     sta (OBJ_ADDR), y
-    
 
     ldy #0
     lda (OBJ_ADDR), y
 
-    sbc #0
+    adc #0
     sta (OBJ_ADDR), y
 
 
     ldy #1
     lda (OBJ_ADDR), y
-    sbc #0
+    adc #0
     sta (OBJ_ADDR), y
 
     bra @add_y_vel
 
     @sub_x_vel:
-    lda #$FF
-    sec
-    sbc x_vel_frac
-    sta x_vel_frac
-
     ldy #2
     lda (OBJ_ADDR), y
 
     sec
     sbc x_vel_frac
-    php
     sta (OBJ_ADDR), y
+    php
 
     lda #$FF
     sec
@@ -177,36 +168,31 @@ __m_apply_velocity:
     ldy #5
     lda (OBJ_ADDR), y
 
-    sec
-    sbc y_vel_frac
+    clc
+    adc y_vel_frac
     sta (OBJ_ADDR), y
-    
 
     ldy #3
     lda (OBJ_ADDR), y
 
-    sbc #0
+    adc #0
     sta (OBJ_ADDR), y
 
 
     ldy #4
     lda (OBJ_ADDR), y
-    sbc #0
+    adc #0
     sta (OBJ_ADDR), y
 
     bra @end_sub
 
     @sub_y_vel:
-    lda #$FF
-    sec
-    sbc y_vel_frac
-    sta y_vel_frac
-
     ldy #5
     lda (OBJ_ADDR), y
 
     sec
     sbc y_vel_frac
+    sta (OBJ_ADDR), y
     php
 
     lda #$FF
