@@ -46,6 +46,8 @@ struct ObjectReferenceStruct
     int spr_addr;
     char num_of_sprs;
     char pal_off;
+    char spr_width;
+    char spr_height;
     char width;
     char height;
 };
@@ -55,6 +57,7 @@ char alloc_obj();
 void dealloc_obj(char obj_ind);
 
 int _dis_to_megaman(struct ObjectStruct *obj);
+char _collided_with_megaman(struct ObjectStruct *obj);
 void empty_obj_func(char obj_ind);
 void spawn_check(int chunk);
 void check_despawn(char obj_ind);

@@ -52,8 +52,8 @@ void dealloc_sprites(char index){
 void play_anim_frame(struct MegamanStruct *obj){
     char is_reverse = 0;
     int i=0;
-    int x = ((((obj->x<<1) | (obj->frac_x>>7)) - 32)-scroll_x)&0b0000001111111111;
-    int y = ((((obj->y<<1) | (obj->frac_y>>7)) - 32)-scroll_y)&0b0000000111111111;
+    int x = ((((obj->x<<1) | (obj->frac_x>>7)) - 64)-scroll_x)&0b0000001111111111;
+    int y = ((((obj->y<<1) | (obj->frac_y>>7)) - 64)-scroll_y)&0b0000000111111111;
 
     int base_addr;
 
@@ -68,8 +68,8 @@ void play_obj_anim_frame(char obj_ind){
     char is_reverse = 0;
     int base_addr;
 
-    int x = ((obj->x<<1) | (obj->frac_x>>7)) - object_defs[obj->obj_type_ref].width - scroll_x;
-    int y = ((obj->y<<1) | (obj->frac_y>>7)) - object_defs[obj->obj_type_ref].height - scroll_y;
+    int x = ((obj->x<<1) | (obj->frac_x>>7)) - object_defs[obj->obj_type_ref].spr_width - scroll_x;
+    int y = ((obj->y<<1) | (obj->frac_y>>7)) - object_defs[obj->obj_type_ref].spr_height - scroll_y;
 
     if(x < 512 & y < 512 & x > -64 & y > -64){
 

@@ -82,3 +82,29 @@ int _dis_to_megaman(struct ObjectStruct *obj){
     int dis = dis_sq >> 3;
     return(dis);
 }
+
+char _collided_with_megaman(struct ObjectStruct *obj){
+    int x = megaman_obj.x;
+    int y = megaman_obj.y;
+    char width = object_defs[obj->obj_type_ref].width + 8;
+    char height = object_defs[obj->obj_type_ref].height + 8;
+
+    // char collided = 0;
+
+    if(x > obj->x && x-obj->x > width){
+        return(0);
+    }
+    if(x < obj->x && obj->x-x > width){
+        return(0);
+    }
+    
+    if(y > obj->y && y-obj->y > height){
+        return(0);
+    }
+    if(y < obj->y && obj->y-y > height){
+        return(0);
+    }
+
+    return(1);
+
+}

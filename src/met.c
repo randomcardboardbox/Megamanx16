@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "met.h"
 #include "globals.h"
 #include "object.h"
@@ -99,7 +101,11 @@ void met_update(char obj_ind){
     int dis_from_mm;
     struct ObjectStruct *obj = &objects[obj_ind];
 
-    // play_obj_anim_frame(obj_ind);
+    //check if megaman has collided with an enemy;
+    char collided_with_mm = _collided_with_megaman(obj);
+    if(collided_with_mm != 0){
+        printf("colliding");
+    }
 
     if(obj->var1 == 0){
         if(obj->timer1 == 0){

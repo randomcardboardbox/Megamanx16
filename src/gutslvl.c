@@ -43,8 +43,11 @@ void g_init_obj_refs(void){
     object_defs[1].spr_addr = met_spr_addr;
     object_defs[1].update_ptr = met_update;
     object_defs[1].draw_ptr = met_draw;
-    object_defs[1].width = 32;
-    object_defs[1].height = 32;
+    object_defs[1].spr_width = 32;
+    object_defs[1].spr_height = 32;
+    object_defs[1].width = 7;
+    object_defs[1].height = 7;
+
 
     //set bullet object information
     object_defs[2].anim_addr = bullet_anim_addr;
@@ -53,8 +56,10 @@ void g_init_obj_refs(void){
     object_defs[2].spr_addr = bullet_spr_addr;
     object_defs[2].update_ptr = bullet_update;
     object_defs[2].draw_ptr = bullet_draw;
-    object_defs[2].width = 8;
-    object_defs[2].height = 8;
+    object_defs[2].spr_width = 8;
+    object_defs[2].spr_height = 8;
+    object_defs[2].width = 4;
+    object_defs[2].height = 4;
 }
 
 void g_init_lvl(void){
