@@ -26,9 +26,9 @@ void load_new_room_ver(){
         spawn_check(index);
     }
     for(index=0; index<32; index++){
-        RAM_BANK_SEL = tile_set_ram_bank+0;
+        RAM_BANK_SEL = 1;
         _load_vert_map_sect(0, 64, 1, index, tile_map0_ram_addr, map_l0_vram_addr);
-        RAM_BANK_SEL = tile_set_ram_bank+1;
+        RAM_BANK_SEL = 2;
         _load_vert_map_sect(0, 64, 1, index, tile_map1_ram_addr, map_l1_vram_addr);
     }
 
@@ -53,9 +53,9 @@ void load_new_room_ver(){
         if(old_scroll_block_y != scroll_block & scroll_block != 0){
             for(index=0; index<32; index++){
                 int load_pos = (scroll_block-1)*2;
-                RAM_BANK_SEL = tile_set_ram_bank+0;
+                RAM_BANK_SEL = 1;
                 _load_vert_map_sect(load_pos, 2, 0, index, tile_map0_ram_addr, map_l0_vram_addr);
-                RAM_BANK_SEL = tile_set_ram_bank+1;
+                RAM_BANK_SEL = 2;
                 _load_vert_map_sect(load_pos, 2, 0, index, tile_map1_ram_addr, map_l1_vram_addr);
             }
         }
@@ -63,7 +63,6 @@ void load_new_room_ver(){
     }
 
     megaman_obj.x = megaman_obj.x%256;
-    megaman_obj.y = megaman_obj.y%256;
     scroll_x = 0;
     scroll_y = 0;
     L0_VSCROLL = scroll_y;
@@ -73,9 +72,9 @@ void load_new_room_ver(){
     L1_HSCROLL = scroll_x;
     
     for(index=0; index<32; index++){
-        RAM_BANK_SEL = tile_set_ram_bank+0;
+        RAM_BANK_SEL = 1;
         _load_vert_map_sect(0, 2, 0, index, tile_map0_ram_addr, map_l0_vram_addr);
-        RAM_BANK_SEL = tile_set_ram_bank+1;
+        RAM_BANK_SEL = 2;
         _load_vert_map_sect(0, 2, 0, index, tile_map1_ram_addr, map_l1_vram_addr);
     }
 }
@@ -112,9 +111,9 @@ void load_new_room_hor(){
             if(scroll_block%2 == 0){
                 spawn_check(scroll_block/2);
             }
-            RAM_BANK_SEL = tile_set_ram_bank+0;
+            RAM_BANK_SEL = 1;
             _load_vert_map_sect(0, 64, 0, load_pos, tile_map0_ram_addr, map_l0_vram_addr);
-            RAM_BANK_SEL = tile_set_ram_bank+1;
+            RAM_BANK_SEL = 2;
             _load_vert_map_sect(0, 64, 0, load_pos, tile_map1_ram_addr, map_l1_vram_addr);
         }
         old_scroll_block = scroll_block;
@@ -123,10 +122,9 @@ void load_new_room_hor(){
     // megaman_obj.x = 32;
     scroll_x = 0;
     megaman_obj.x = megaman_obj.x %256;
-    megaman_obj.y = megaman_obj.y%256;
-    RAM_BANK_SEL = tile_set_ram_bank+0;
+    RAM_BANK_SEL = 1;
     _load_vert_map_sect(0, 64, 0, 31, tile_map0_ram_addr, map_l0_vram_addr);
-    RAM_BANK_SEL = tile_set_ram_bank+1;
+    RAM_BANK_SEL = 2;
     _load_vert_map_sect(0, 64, 0, 31, tile_map1_ram_addr, map_l1_vram_addr);
 }
 
@@ -182,18 +180,18 @@ void calc_scroll(){
         if(scroll_block%2 == 0){
             spawn_check((scroll_block/2)+16);
         }
-        RAM_BANK_SEL = ram_sec_f+tile_set_ram_bank+0;
+        RAM_BANK_SEL = ram_sec_f+1;
         _load_vert_map_sect(0, 64, 0, (scroll_block+31)%128, tile_map0_ram_addr, map_l0_vram_addr);
-        RAM_BANK_SEL = ram_sec_f+tile_set_ram_bank+1;
+        RAM_BANK_SEL = ram_sec_f+2;
         _load_vert_map_sect(0, 64, 0, (scroll_block+31)%128, tile_map1_ram_addr, map_l1_vram_addr);
     }
     if(old_scroll_block > scroll_block){
         if(scroll_block%2 == 0){
             spawn_check(scroll_block/2);
         }
-        RAM_BANK_SEL = ram_sec_b+tile_set_ram_bank+0;
+        RAM_BANK_SEL = ram_sec_b+1;
         _load_vert_map_sect(0, 64, 0, scroll_block%128, tile_map0_ram_addr, map_l0_vram_addr);
-        RAM_BANK_SEL = ram_sec_b+tile_set_ram_bank+1;
+        RAM_BANK_SEL = ram_sec_b+2;
         _load_vert_map_sect(0, 64, 0, scroll_block%128, tile_map1_ram_addr, map_l1_vram_addr);
     }
 

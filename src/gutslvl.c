@@ -9,7 +9,7 @@ int *met_anim_addr;
 int met_spr_addr = 0x1700;
 
 int *bullet_anim_addr;
-int bullet_spr_addr = 0x1920;
+int bullet_spr_addr = 0x1AD0;
 
 void g_init_load_assets(void){
     //import met data

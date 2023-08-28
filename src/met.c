@@ -4,18 +4,11 @@
 #include "globals.h"
 #include "object.h"
 #include "utils.h"
-#include "megaman.h"
 
 void bullet_update(char obj_ind){
-    char collided_with_mm = _collided_with_megaman(&objects[obj_ind]);
     char anim[] = {0,1,2,3,4,5};
     _m_apply_velocity(&objects[obj_ind]);
     play_obj_anim(6, anim, obj_ind);
-
-    if(collided_with_mm != 0){
-        char dir = _megaman_dir(&objects[obj_ind]);
-        hurt_megaman(dir^0b00000001);
-    }
 };
 
 void bullet_draw(char obj_ind){
@@ -111,15 +104,10 @@ void met_update(char obj_ind){
     //check if megaman has collided with an enemy;
     char collided_with_mm = _collided_with_megaman(obj);
     if(collided_with_mm != 0){
-        char dir = _megaman_dir(obj);
-        hurt_megaman(dir^0b00000001);
+        printf("colliding");
     }
 
     if(obj->var1 == 0){
-        char dir = _megaman_dir(obj);
-        if(dir){ obj->status = obj->status | 0b00000010; }
-        else{ obj->status = obj->status & 0b11111101; }
-
         if(obj->timer1 == 0){
             dis_from_mm = _dis_to_megaman(obj);
             if(dis_from_mm < 200){
@@ -159,7 +147,7 @@ void met_update(char obj_ind){
         play_obj_anim(6, m_close_anim, obj_ind);
         if(obj->anim_index == 5){
             obj->var1 = 0;
-            obj->timer1 = 80;
+            obj->timer1 = 45;
             obj->anim_index = 0;
             obj->anim_timer = 0;
         }

@@ -57,7 +57,7 @@ void set_layer_config(void){
     DC_BORDER = 0;
     CTRL = CTRL | 0b00000010;
     DC_HSTART = 0;
-    DC_HSTOP = (495 >> 2);
+    DC_HSTOP = (496 >> 2);
 }
 
 void main(void) {
@@ -77,9 +77,9 @@ void main(void) {
     }
 
     for(index=0; index<32; index++){                        // transfer mapbase data into vram
-        RAM_BANK_SEL = tile_set_ram_bank+0;
+        RAM_BANK_SEL = 1;
         _load_vert_map_sect(0, 64, 0, index, tile_map0_ram_addr, map_l0_vram_addr);
-        RAM_BANK_SEL = tile_set_ram_bank+1;
+        RAM_BANK_SEL = 2;
         _load_vert_map_sect(0, 64, 0, index, tile_map1_ram_addr, map_l1_vram_addr);
     }
 

@@ -5,8 +5,6 @@
 #include "megaman.h"
 
 #define no_of_objs 30
-#define lvl_data_bank 2
-#define tile_set_ram_bank 4
 
 extern int scroll_x;
 extern int scroll_y;

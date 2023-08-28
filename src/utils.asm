@@ -569,10 +569,9 @@ __load_vert_map_sect:
 
     rts
 
-; _check_collision_data(char ram_bank, int col_data_addr, int x, int y)
+; _check_collision_data(int col_data_addr, int x, int y)
 ; PS: the x and y values of object positions are made 
 TILE_ADDR = ZP_PTR_1
-RAM_BANK_SEL = $0000
 __check_collision_data:
     ; getting tile addr based on y pos
     lsr
@@ -608,10 +607,6 @@ __check_collision_data:
     clc
     adc TILE_ADDR+1
     sta TILE_ADDR+1
-
-    lda (sp)
-    sta RAM_BANK_SEL
-    inc sp
 
     ; get and return collision data
     lda (TILE_ADDR)

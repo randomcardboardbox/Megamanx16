@@ -18,8 +18,8 @@ char tile_map2[] =  "gutr00l10.stg";
 char col_map[] =    "gutc00.stg";
 char spawn_map[] =  "guts00.stg";
 
-long map_l0_vram_addr   = 0x07000;
-long map_l1_vram_addr   = 0x07800;
-int tile_set_addr      = 0x080; // mulitply by 8 to get the actual addr
+long map_l0_vram_addr   = 0x05000;
+long map_l1_vram_addr   = 0x06000;
+int tile_set_addr      = 0x070; // mulitply by 8 to get the actual addr
 
 char objs_per_chunk = 3;

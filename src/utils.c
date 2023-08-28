@@ -53,7 +53,7 @@ void play_anim_frame(struct MegamanStruct *obj){
     char is_reverse = 0;
     int i=0;
     int x = ((((obj->x<<1) | (obj->frac_x>>7)) - 64)-scroll_x)&0b0000001111111111;
-    int y = ((((obj->y<<1) | (obj->frac_y>>7)) - 64)-scroll_y)&0b0000001111111111;
+    int y = ((((obj->y<<1) | (obj->frac_y>>7)) - 64)-scroll_y)&0b0000000111111111;
 
     int base_addr;
 
@@ -146,23 +146,22 @@ void load_map_data(){
     col_map[5] = 0x30+(lvl_num);
     spawn_map[5] = 0x30+(lvl_num);
 
-    // if(coll_data_addr != 0){ free(coll_data_addr); }
+    if(coll_data_addr != 0){ free(coll_data_addr); }
     if(spawn_data_addr != 0){ free(spawn_data_addr); }
     
     for(i=0; i<no_of_secs; i++){
         tile_map[8] = 0x30+(i);
         tile_map2[8] = 0x30+(i);
 
-        coll_data_addr = 0xA000;
+        coll_data_addr = malloc( *(int *)(map_info_addr+(lvl_num*room_data_size)+2));
         spawn_data_addr = malloc( *(int *)(map_info_addr+(lvl_num*room_data_size)+7));
         
-        RAM_BANK_SEL = tile_set_ram_bank+(i*2)+0;
+        RAM_BANK_SEL = (i*2)+1;
         _load_file_into_ram(tile_map, 13, tile_map0_ram_addr);
-        RAM_BANK_SEL = tile_set_ram_bank+(i*2)+1;
+        RAM_BANK_SEL = (i*2)+2;
         _load_file_into_ram(tile_map2, 13, tile_map1_ram_addr);
     }
 
-    RAM_BANK_SEL = lvl_data_bank;
     _load_file_into_ram(col_map, 10, coll_data_addr);
     _load_file_into_ram(spawn_map, 10, spawn_data_addr);
 }

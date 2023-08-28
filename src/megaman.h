@@ -26,7 +26,6 @@ struct MegamanStruct {
 
 extern void _m_apply_velocity(int obj_addr);
 
-void hurt_megaman(char dir);
 void move_megaman_obj(void);
 void update_megaman(void);
 void check_collision(void);
