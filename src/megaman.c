@@ -14,7 +14,7 @@ void load_megaman_spr_data(){
     char m_spr_filename[] = "megaman.spr";
     char m_anim_filename[] = "megaman.anm";
 
-    int *m_anim_addr = (int*) malloc(0x1200);
+    int *m_anim_addr = (int*) malloc(0x1C00);
     char num_of_sprs = 0;
     char spr_ind = 0;
     
@@ -50,14 +50,21 @@ void check_collision(){
     int ver_x_pos1 = megaman_obj.x-6;//-megaman_obj.x_vel;
     int ver_x_pos2 = megaman_obj.x+6;//-megaman_obj.x_vel;
 
-    char ver_check_1 = _check_collision_data(coll_data_addr, ver_x_pos1, ver_y_pos_down);
-    char ver_check_2 = _check_collision_data(coll_data_addr, ver_x_pos2, ver_y_pos_down);
+    char ver_check_1;
+    char ver_check_2;
+    char ver_check_3;
+    char ver_check_4;
+    char ver_check_5;
+    char ver_check_6;
 
-    char ver_check_3 = _check_collision_data(coll_data_addr, ver_x_pos1, ver_y_pos_up);
-    char ver_check_4 = _check_collision_data(coll_data_addr, ver_x_pos2, ver_y_pos_up);
+    ver_check_1 = _check_collision_data(lvl_data_bank, coll_data_addr, ver_x_pos1, ver_y_pos_down);
+    ver_check_2 = _check_collision_data(lvl_data_bank, coll_data_addr, ver_x_pos2, ver_y_pos_down);
 
-    char ver_check_5 = _check_collision_data(coll_data_addr, ver_x_pos1, megaman_obj.y);
-    char ver_check_6 = _check_collision_data(coll_data_addr, ver_x_pos2, megaman_obj.y);
+    ver_check_3 = _check_collision_data(lvl_data_bank, coll_data_addr, ver_x_pos1, ver_y_pos_up);
+    ver_check_4 = _check_collision_data(lvl_data_bank, coll_data_addr, ver_x_pos2, ver_y_pos_up);
+
+    ver_check_5 = _check_collision_data(lvl_data_bank, coll_data_addr, ver_x_pos1, megaman_obj.y);
+    ver_check_6 = _check_collision_data(lvl_data_bank, coll_data_addr, ver_x_pos2, megaman_obj.y);
 
     if(ver_check_1 | ver_check_2){
         megaman_obj.y = ((megaman_obj.y-18) & 0b11110000)+21;
@@ -73,11 +80,13 @@ void check_collision(){
     }
     
     if(ver_check_3 | ver_check_4){
-        megaman_obj.y = ((megaman_obj.y) & 0b11110000)+16;
-        megaman_obj.frac_y = 0;
-
-        megaman_obj.y_vel = 0;
-        megaman_obj.y_frac_vel = 0;
+        if(megaman_obj.y_vel > 128){
+            megaman_obj.y = ((megaman_obj.y) & 0b11110000)+16;
+            megaman_obj.frac_y = 0;
+            
+            megaman_obj.y_vel = 0;
+            megaman_obj.y_frac_vel = 0;
+        }
     }
     
 
@@ -104,9 +113,10 @@ void check_collision(){
         x_pos -= 8;
     }
 
-    check_1 = _check_collision_data(coll_data_addr, x_pos, y_pos1);
-    check_2 = _check_collision_data(coll_data_addr, x_pos, y_pos2);
-    check_3 = _check_collision_data(coll_data_addr, x_pos, y_pos3);
+    
+    check_1 = _check_collision_data(lvl_data_bank, coll_data_addr, x_pos, y_pos1);
+    check_2 = _check_collision_data(lvl_data_bank, coll_data_addr, x_pos, y_pos2);
+    check_3 = _check_collision_data(lvl_data_bank, coll_data_addr, x_pos, y_pos3);
     
     if(check_1 | check_2 | check_3){
         megaman_obj.x = ((megaman_obj.x) & 0b1111111111110000)+8;
@@ -116,90 +126,143 @@ void check_collision(){
 
 char is_holding_jump = 0;
 char was_pressing_a = 0;
+char jump_anim = 0;
+char falling = 1;
+char megaman_hurt = 0;
+char megaman_invinc = 0;
+char m_invnc_timer = 0;
+
+void hurt_megaman(char dir){
+    if(!megaman_invinc){
+        m_invnc_timer = 110;
+        megaman_invinc = 1;
+        megaman_hurt = 1;
+        megaman_obj.anim_index = 0;
+        megaman_obj.anim_timer = 0;
+        megaman_obj.frame = 20;
+
+        is_holding_jump = 0;
+
+        if(dir){
+            megaman_obj.x_vel = -1;
+            megaman_obj.status = megaman_obj.status | 0b00000010;
+        }
+        else{
+            megaman_obj.x_vel = 0;
+            megaman_obj.status = megaman_obj.status & 0b11111101;
+        }
+        megaman_obj.x_frac_vel = 180;
+
+    }
+}
 
 void update_megaman(){
     int term_vel = 100;
     int old_pos_x = megaman_obj.x;
     int joystick = _get_joystick_state();
     char m_run_anim[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14};
+    char m_jump_anim[] = {1,15,16,17,18,19};
+    char m_land_anim[] = {17,16,15,1};
+    char m_hurt_anim[] = {20,  21,22,21,22,21,22,21,22,  23,24,0};
+
+    char land_anim_check = _check_collision_data(lvl_data_bank, coll_data_addr, megaman_obj.x, megaman_obj.y+24);
+
     char is_reverse = 0;
     int i=0;
-
     char old_x_frac_vel = megaman_obj.x_frac_vel;
-    if(get_pressed(joystick, JOY_RIGHT)){
-        if(megaman_obj.status & 0b00000001){
-            megaman_obj.x_frac_vel += 13;
-            if(megaman_obj.x_vel == 1 && megaman_obj.x_frac_vel > 72){
-                megaman_obj.x_frac_vel = 72;
-            }
-            if(old_x_frac_vel > megaman_obj.x_frac_vel){
-                megaman_obj.x_vel += 1;
-            }
-        }
-        else{
-            megaman_obj.x_vel = 1;
-            megaman_obj.x_frac_vel = 72;
-        }
 
-        
-        if((megaman_obj.status & 0b00000010) == 0){
-            megaman_obj.x_vel = 0;
-            megaman_obj.x_frac_vel = 0;
+    if(megaman_invinc){
+        m_invnc_timer -= 1;
+        if(m_invnc_timer == 0){
+            megaman_invinc = 0;
         }
-
-
-        megaman_obj.status = megaman_obj.status | 0b00000010;
-        megaman_obj.status = megaman_obj.status | 0b00000100;
     }
-    else if(get_pressed(joystick, JOY_LEFT)){
-        if(megaman_obj.status & 0b00000001){
-            megaman_obj.x_frac_vel += 13;
-            if(megaman_obj.x_vel == 254 && megaman_obj.x_frac_vel > 72){
+
+    if(megaman_hurt){
+        if(megaman_obj.anim_index == 11){
+            megaman_hurt = 0;
+        }
+    }
+    else{
+        if(get_pressed(joystick, JOY_RIGHT)){
+            if(megaman_obj.status & 0b00000001){
+                megaman_obj.x_frac_vel += 13;
+                if(megaman_obj.x_vel == 1 && megaman_obj.x_frac_vel > 72){
+                    megaman_obj.x_frac_vel = 72;
+                }
+                if(old_x_frac_vel > megaman_obj.x_frac_vel){
+                    megaman_obj.x_vel += 1;
+                }
+            }
+            else{
+                megaman_obj.x_vel = 1;
                 megaman_obj.x_frac_vel = 72;
             }
-            if(old_x_frac_vel > megaman_obj.x_frac_vel){
-                megaman_obj.x_vel -= 1;
+
+            
+            if((megaman_obj.status & 0b00000010) == 0){
+                megaman_obj.x_vel = 0;
                 megaman_obj.x_frac_vel = 0;
             }
-        
-        }
-        else{
-            megaman_obj.x_vel = 254;
-            megaman_obj.x_frac_vel = 72;
-        }
 
-        if((megaman_obj.status & 0b00000010) || (megaman_obj.status & 0b00000100)==0){
-            megaman_obj.x_vel = 255;
+
+            megaman_obj.status = megaman_obj.status | 0b00000010;
+            megaman_obj.status = megaman_obj.status | 0b00000100;
+        }
+        else if(get_pressed(joystick, JOY_LEFT)){
+            if(megaman_obj.status & 0b00000001){
+                megaman_obj.x_frac_vel += 13;
+                if(megaman_obj.x_vel == 254 && megaman_obj.x_frac_vel > 72){
+                    megaman_obj.x_frac_vel = 72;
+                }
+                if(old_x_frac_vel > megaman_obj.x_frac_vel){
+                    megaman_obj.x_vel -= 1;
+                    megaman_obj.x_frac_vel = 0;
+                }
+            
+            }
+            else{
+                megaman_obj.x_vel = 254;
+                megaman_obj.x_frac_vel = 72;
+            }
+
+            if((megaman_obj.status & 0b00000010) || (megaman_obj.status & 0b00000100)==0){
+                megaman_obj.x_vel = 255;
+                megaman_obj.x_frac_vel = 0;
+            }
+
+            megaman_obj.status = megaman_obj.status & 0b11111101;
+            megaman_obj.status = megaman_obj.status | 0b00000100;
+        }
+        else{ 
+            megaman_obj.status = megaman_obj.status & 0b11111011; 
+            megaman_obj.x_vel = 0;
             megaman_obj.x_frac_vel = 0;
+
+            // if(){
+            //     megaman_obj.x_vel = 0;
+            //     megaman_obj.x_frac_vel = 0;
+            // }
+            // else{
+
+            // }
         }
+        
+        if(get_pressed(joystick, JOY_A)){
+            if((megaman_obj.status & 0b00000001) && was_pressing_a == 0){
+                megaman_obj.anim_timer = 0;
+                megaman_obj.anim_index = 0;
+                jump_anim = 1;
+                falling = 0;
 
-        megaman_obj.status = megaman_obj.status & 0b11111101;
-        megaman_obj.status = megaman_obj.status | 0b00000100;
-    }
-    else{ 
-        megaman_obj.status = megaman_obj.status & 0b11111011; 
-        megaman_obj.x_vel = 0;
-        megaman_obj.x_frac_vel = 0;
-
-        // if(){
-        //     megaman_obj.x_vel = 0;
-        //     megaman_obj.x_frac_vel = 0;
-        // }
-        // else{
-
-        // }
-    }
-    
-    if(get_pressed(joystick, JOY_A)){
-        if((megaman_obj.status & 0b00000001) && was_pressing_a == 0){
-            megaman_obj.y_vel = -6;
-            megaman_obj.y_frac_vel = 200;
-            is_holding_jump = 1;
+                megaman_obj.y_vel = -6;
+                megaman_obj.y_frac_vel = 200;
+                is_holding_jump = 1;
+            }
         }
     }
 
     was_pressing_a = get_pressed(joystick, JOY_A);
-
     if((megaman_obj.status & 0b00000001) == 0){
         char old_y_frac_vel = megaman_obj.y_frac_vel;
         megaman_obj.y_frac_vel += 70;
@@ -207,7 +270,7 @@ void update_megaman(){
             megaman_obj.y_vel += 1;
         }
 
-        if(get_pressed(joystick, JOY_A) && is_holding_jump){
+        if(get_pressed(joystick, JOY_A) && !megaman_hurt && is_holding_jump){
 
             if(megaman_obj.y_vel < 128){
                 is_holding_jump = 0;
@@ -242,18 +305,51 @@ void update_megaman(){
     curr_room = megaman_obj.x>>8;
 
 
-
-    if((megaman_obj.status & 0b00000010) == 0){
-        is_reverse = 1;
-    }
-
-    if(((megaman_obj.status & 0b00000001) > 0) & ((megaman_obj.status & 0b00000100) > 0)){
-        play_anim(14, m_run_anim, &megaman_obj);
+    if(megaman_hurt){
+        play_anim(12, m_hurt_anim, &megaman_obj);
     }
     else{
-        megaman_obj.frame = 0;
-        megaman_obj.anim_timer = 0;
-        megaman_obj.anim_index = 0;
+        if((megaman_obj.status & 0b00000010) == 0){
+            is_reverse = 1;
+        }
+        
+
+        if(((megaman_obj.status & 0b00000001) > 0) & ((megaman_obj.status & 0b00000100) > 0)){
+            play_anim(14, m_run_anim, &megaman_obj);
+            falling = 1;
+        }
+        else if((megaman_obj.status & 0b00000001) == 0){
+            if(falling){
+                megaman_obj.frame = 16;
+                megaman_obj.anim_timer = 0;
+                megaman_obj.anim_index = 0;
+            }
+            else{
+                if(jump_anim == 1){
+                    play_anim(6, m_jump_anim, &megaman_obj);
+                    if(megaman_obj.anim_index == 5 || megaman_obj.y_vel < 128){
+                        jump_anim = 0;
+                        megaman_obj.anim_index = 0;
+                        megaman_obj.anim_timer = 0;
+                    }
+                }
+                else if(land_anim_check){
+                    play_anim(4, m_land_anim, &megaman_obj);
+                }
+                else{
+                    megaman_obj.frame = 19;
+                    megaman_obj.anim_timer = 0;
+                    megaman_obj.anim_index = 0;
+                }
+            }
+        }
+        else{
+            megaman_obj.frame = 0;
+            megaman_obj.anim_timer = 0;
+            megaman_obj.anim_index = 0;
+            jump_anim = 0;
+            falling = 1;
+        }
     }
 }
 

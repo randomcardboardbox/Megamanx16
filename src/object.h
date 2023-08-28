@@ -56,6 +56,7 @@ void draw_objs(void);
 char alloc_obj();
 void dealloc_obj(char obj_ind);
 
+char _megaman_dir(struct ObjectStruct *obj);
 int _dis_to_megaman(struct ObjectStruct *obj);
 char _collided_with_megaman(struct ObjectStruct *obj);
 void empty_obj_func(char obj_ind);
