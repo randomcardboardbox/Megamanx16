@@ -1,4 +1,7 @@
 #include <stdlib.h>
+#include <cbm.h>
+
+#include "zsmplayer.h"
 
 #include "globals.h"
 #include "utils.h"
@@ -7,6 +10,23 @@
 
 #include "object.h"
 #include "gutslvl.h"
+
+#define MUSNAM "guttheme.zsm"
+#define MUSBANK 6
+#define LFN 0
+#define DEVICE 8
+#define SA 2
+#define MODE 0
+#define LOADTO 0xA000 
+
+void init_music_player(void){
+    cbm_k_setnam(MUSNAM);
+    cbm_k_setlfs(LFN, DEVICE, SA);
+    RAM_BANK_SEL = MUSBANK;
+    cbm_k_load(MODE, LOADTO);
+
+    zsm_init();
+}
 
 void set_layer_config(void){
     _set_layer0_enable(1);
@@ -63,6 +83,8 @@ void main(void) {
         _load_vert_map_sect(0, 64, 0, index, tile_map1_ram_addr, map_l1_vram_addr);
     }
 
+    init_music_player();
+
     megaman_obj.x = 100;
     megaman_obj.y = 100;
     
@@ -72,6 +94,8 @@ void main(void) {
         calc_scroll();
 
         _wait_for_nmi();
+        // zsm_play();
+
         set_scroll();
         _draw_objects(&play_obj_anim_frame, objects);
         animate_megaman();

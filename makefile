@@ -7,7 +7,7 @@ ALL_C = src/main.c
 ALL_OBJS = $(patsubst %.c,%.o,$(wildcard src/*.c)) $(patsubst %.asm,%.obj,$(wildcard src/*.asm))
 
 all: $(ALL_OBJS)
-	cl65 -t cx16 -o x16_file_sys/MEGAMAN.PRG -m mega.mmap $(ALL_OBJS)
+	cl65 -t cx16 -o x16_file_sys/MEGAMAN.PRG -m mega.mmap $(ALL_OBJS) src/zsound.lib
 	rm -f src/*.mmap src/*.o src/*.obj src/*.s *.mmap
 
 %.o: %.c

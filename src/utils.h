@@ -54,8 +54,8 @@ char get_pressed(int joystick, int button);
 
 #define JOY_B           0b0000000010000000
 #define JOY_Y           0b0000000001000000
-#define JOY_SELECT      0b0000000000100000
-#define JOY_START       0b0000000000010000
+#define JOY_SEL      0b0000000000100000
+#define JOY_SRT       0b0000000000010000
 #define JOY_UP          0b0000000000001000
 #define JOY_DOWN        0b0000000000000100
 #define JOY_LEFT        0b0000000000000010
