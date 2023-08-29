@@ -55,6 +55,7 @@ void spawn_check(int chunk){
     for(i=0; i<objs_per_chunk; i++){
         char obj_ref = *(char *)(spawn_data_addr+(objs_per_chunk*chunk*6)+(i*6));
         char spawn_id = *(char *)(spawn_data_addr+(objs_per_chunk*chunk*6)+(i*6)+5);
+        RAM_BANK_SEL = lvl_data_bank;
         
         if(obj_ref != 0 && spawned_objs_table[spawn_id] == 0){
             int x = *(int *)(spawn_data_addr+(objs_per_chunk*chunk*6)+(i*6)+1);
@@ -81,6 +82,13 @@ int _dis_to_megaman(struct ObjectStruct *obj){
 
     int dis = dis_sq >> 3;
     return(dis);
+}
+
+char _megaman_dir(struct ObjectStruct *obj){
+    if(obj->x < megaman_obj.x){
+        return(1);
+    }
+    return(0);
 }
 
 char _collided_with_megaman(struct ObjectStruct *obj){
