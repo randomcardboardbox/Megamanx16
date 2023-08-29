@@ -12,7 +12,7 @@
 #include "gutslvl.h"
 
 #define MUSNAM "guttheme.zsm"
-#define MUSBANK 6
+#define MUSBANK 10
 #define LFN 0
 #define DEVICE 8
 #define SA 2
@@ -26,6 +26,7 @@ void init_music_player(void){
     cbm_k_load(MODE, LOADTO);
 
     zsm_init();
+    zsm_startmusic(MUSBANK, LOADTO);
 }
 
 void set_layer_config(void){
@@ -63,6 +64,8 @@ void set_layer_config(void){
 void main(void) {
     int index = 0;
     char obj_ind;
+    
+    init_music_player();
 
     _init_irq_handler();
     load_megaman_spr_data();
@@ -83,8 +86,6 @@ void main(void) {
         _load_vert_map_sect(0, 64, 0, index, tile_map1_ram_addr, map_l1_vram_addr);
     }
 
-    init_music_player();
-
     megaman_obj.x = 100;
     megaman_obj.y = 100;
     
@@ -94,7 +95,7 @@ void main(void) {
         calc_scroll();
 
         _wait_for_nmi();
-        // zsm_play();
+        zsm_play();
 
         set_scroll();
         _draw_objects(&play_obj_anim_frame, objects);

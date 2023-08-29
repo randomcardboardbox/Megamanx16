@@ -157,7 +157,7 @@ void hurt_megaman(char dir){
 }
 
 void update_megaman(){
-    int term_vel = 100;
+    int term_vel = 12;
     int old_pos_x = megaman_obj.x;
     int joystick = _get_joystick_state();
     char m_run_anim[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14};
@@ -238,14 +238,6 @@ void update_megaman(){
             megaman_obj.status = megaman_obj.status & 0b11111011; 
             megaman_obj.x_vel = 0;
             megaman_obj.x_frac_vel = 0;
-
-            // if(){
-            //     megaman_obj.x_vel = 0;
-            //     megaman_obj.x_frac_vel = 0;
-            // }
-            // else{
-
-            // }
         }
         
         if(get_pressed(joystick, JOY_A)){
@@ -289,9 +281,9 @@ void update_megaman(){
 
             is_holding_jump = 0;
 
-            // if(megaman_obj.y_vel < 128 & megaman_obj.y_vel > term_vel){
-            //     megaman_obj.y_vel = term_vel;
-            // }
+            if(megaman_obj.y_vel < 128 & megaman_obj.y_vel > term_vel){
+                megaman_obj.y_vel = term_vel;
+            }
         }
     }
     else{

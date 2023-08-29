@@ -4,7 +4,7 @@
 
 #include "met.h"
 
-struct ObjectReferenceStruct object_defs[no_of_objs];
+struct ObjectReferenceStruct object_defs[no_of_objtypes];
 struct ObjectStruct objects[no_of_objs];
 
 char obj_alloc_table[no_of_objs] = {0};

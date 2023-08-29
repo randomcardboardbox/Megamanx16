@@ -65,17 +65,17 @@ r15L              = r15
 r15H              = r15+1
 
 ; Zero-Page userspace
-ZP_PTR_1          = $7E   ; four pointers for temporary use only
-ZP_PTR_2          = $22
-ZP_PTR_3          = $24
-ZP_PTR_4          = $26
-ZP_PTR_5          = $28
-ZP_PTR_6          = $30
-ZP_PTR_7          = $32
-ZP_PTR_8          = $34
-ZP_PTR_9          = $36
-ZP_PTR_10          = $38
-ZP_PTR_11          = $40
+ZP_PTR_1          = $40   ; four pointers for temporary use only
+ZP_PTR_2          = $42
+ZP_PTR_3          = $43
+ZP_PTR_4          = $44
+ZP_PTR_5          = $46
+ZP_PTR_6          = $48
+ZP_PTR_7          = $50
+ZP_PTR_8          = $52
+ZP_PTR_9          = $54
+ZP_PTR_10          = $56
+ZP_PTR_11          = $58
 
 ; I/O Registers
 VERA_addr_low     = $9F20
