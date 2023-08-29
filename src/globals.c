@@ -1,5 +1,7 @@
 int scroll_x;
 int scroll_y;
+int scroll_x_bg;
+int scroll_y_bg;
 
 int tile_map0_ram_addr = 0xA000;
 int tile_map1_ram_addr = 0xA000;
@@ -9,7 +11,7 @@ int spawn_data_addr = 0x0000;
 char curr_room=0;
 
 char lvl_num = 0;
-char room_data_size = 10;
+char room_data_size = 12;
 int map_info_addr = 0;
 char last_room;
 
@@ -23,3 +25,5 @@ long map_l1_vram_addr   = 0x07800;
 int tile_set_addr      = 0x088; // mulitply by 8 to get the actual addr
 
 char objs_per_chunk = 3;
+char bg_parallax_x;
+char bg_parallax_y;

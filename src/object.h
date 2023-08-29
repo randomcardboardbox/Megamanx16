@@ -55,6 +55,7 @@ struct ObjectReferenceStruct
 void draw_objs(void);
 char alloc_obj();
 void dealloc_obj(char obj_ind);
+void clear_objs();
 
 char _megaman_dir(struct ObjectStruct *obj);
 int _dis_to_megaman(struct ObjectStruct *obj);

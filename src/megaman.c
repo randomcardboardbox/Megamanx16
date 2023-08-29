@@ -157,7 +157,7 @@ void hurt_megaman(char dir){
 }
 
 void update_megaman(){
-    int term_vel = 12;
+    int term_vel = 10;
     int old_pos_x = megaman_obj.x;
     int joystick = _get_joystick_state();
     char m_run_anim[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14};
@@ -171,13 +171,20 @@ void update_megaman(){
     int i=0;
     char old_x_frac_vel = megaman_obj.x_frac_vel;
 
+
+    megaman_obj.y = megaman_obj.y & 0b0000000011111111;
+    if(megaman_obj.x < 16){
+        megaman_obj.x = 16;
+    }
+
+
+
     if(megaman_invinc){
         m_invnc_timer -= 1;
         if(m_invnc_timer == 0){
             megaman_invinc = 0;
         }
     }
-
     if(megaman_hurt){
         if(megaman_obj.anim_index == 11){
             megaman_hurt = 0;

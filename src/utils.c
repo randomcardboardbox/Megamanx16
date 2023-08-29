@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "globals.h"
 #include "utils.h"
@@ -139,7 +140,10 @@ char get_pressed(int joystick, int button){
 
 void load_map_data(){
     char no_of_secs = *(int *)(map_info_addr+(lvl_num*room_data_size)+9);
-    char i = 0;
+    char i = 0; 
+
+    bg_parallax_x = *(char *)(map_info_addr+(lvl_num*room_data_size)+10);
+    bg_parallax_y = *(char *)(map_info_addr+(lvl_num*room_data_size)+11);
 
     tile_map[5] = 0x30+(lvl_num);
     tile_map2[5] = 0x30+(lvl_num);

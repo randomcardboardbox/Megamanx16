@@ -23,6 +23,15 @@ char alloc_obj(){
     return(no_of_objs-1);
 }
 
+void clear_objs(){
+    int i = 0;
+    for(i=0; i<no_of_objs; i++){
+        if(obj_alloc_table[i]){
+            dealloc_obj(i);
+        }
+    }
+}
+
 void dealloc_obj(char obj_ind){
     struct ObjectStruct object = {0,0,0,0, 0,0,0,0, 0,0, 0,0, 0,0,0,0, 0,0,0, 0,0,0};
 

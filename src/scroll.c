@@ -2,11 +2,13 @@
 
 #include "zsmplayer.h"
 
+#include "object.h"
 #include "globals.h"
 #include "utils.h"
 #include "megaman.h"
 
 int old_scroll_block = 0;
+int old_scroll_block_bg = 0;
 int old_scroll_block_y = 0;
 int scroll_speed = 8;
 int megaman_frac_vel = 200; 
@@ -142,29 +144,34 @@ void check_room_transition(){
 
     if(ext_dir == 1){
         if(curr_room == last_room-1 & (megaman_obj.x%256)>224){
+            clear_objs();
             load_new_room_hor();
         }
     }
     if(ext_dir == 4){
         if(curr_room == last_room-1 & (megaman_obj.y%256)>224){
+            clear_objs();
             load_new_room_ver();
         }
     }
 }
 
 void set_scroll(){
-    L0_HSCROLL = scroll_x;
+    L0_HSCROLL = scroll_x_bg;
     L1_HSCROLL = scroll_x;
 
-    L0_VSCROLL = scroll_y;
+    L0_VSCROLL = scroll_y/bg_parallax_y;
     L1_VSCROLL = scroll_y;
 }
 
 void calc_scroll(){
     int scroll_block;
+    int scroll_block_bg;
     int megaman_pos = (megaman_obj.x << 1) | megaman_obj.frac_x >> 7;
     int ram_sec_f = 0;
     int ram_sec_b = 0;
+    int ram_sec_f_bg = 0;
+    int ram_sec_b_bg = 0;
 
     last_room = *(char *)(map_info_addr+(lvl_num*room_data_size)+6);
 
@@ -177,31 +184,41 @@ void calc_scroll(){
         scroll_x = (curr_room << 9);
     }
 
+    scroll_x_bg = scroll_x - (scroll_x/bg_parallax_x);
 
     scroll_block = scroll_x >> 4;
-    ram_sec_f = ((scroll_x+496) / 2048)*2;
-    ram_sec_b = (scroll_x / 2048)*2;
+    scroll_block_bg = scroll_x_bg >> 4;
+    ram_sec_f = (((scroll_x+496) / 2048))*2;
+    ram_sec_b = ((scroll_x / 2048))*2;
+
+    ram_sec_f_bg = (((scroll_x_bg+496) / 2048))*2;
+    ram_sec_b_bg = ((scroll_x_bg / 2048))*2;
+
 
     if(old_scroll_block < scroll_block){
         if(scroll_block%2 == 0){
             spawn_check((scroll_block/2)+16);
         }
-        RAM_BANK_SEL = ram_sec_f+tile_set_ram_bank+0;
-        _load_vert_map_sect(0, 64, 0, (scroll_block+31)%128, tile_map0_ram_addr, map_l0_vram_addr);
         RAM_BANK_SEL = ram_sec_f+tile_set_ram_bank+1;
         _load_vert_map_sect(0, 64, 0, (scroll_block+31)%128, tile_map1_ram_addr, map_l1_vram_addr);
     }
+    if(old_scroll_block_bg < scroll_block_bg){
+        RAM_BANK_SEL = ram_sec_f_bg+tile_set_ram_bank+0;
+        _load_vert_map_sect(0, 64, 0, (scroll_block_bg+31)%128, tile_map0_ram_addr, map_l0_vram_addr);
+    }
+
     if(old_scroll_block > scroll_block){
-        if(scroll_block%2 == 0){
-            spawn_check(scroll_block/2);
-        }
-        RAM_BANK_SEL = ram_sec_b+tile_set_ram_bank+0;
-        _load_vert_map_sect(0, 64, 0, scroll_block%128, tile_map0_ram_addr, map_l0_vram_addr);
+        if(scroll_block%2 == 0){ spawn_check(scroll_block/2); }
         RAM_BANK_SEL = ram_sec_b+tile_set_ram_bank+1;
         _load_vert_map_sect(0, 64, 0, scroll_block%128, tile_map1_ram_addr, map_l1_vram_addr);
     }
+    if(old_scroll_block_bg > scroll_block_bg){
+        RAM_BANK_SEL = ram_sec_b_bg+tile_set_ram_bank+0;
+        _load_vert_map_sect(0, 64, 0, scroll_block_bg%128, tile_map0_ram_addr, map_l0_vram_addr);
+    }
 
     old_scroll_block = scroll_block;
+    old_scroll_block_bg = scroll_block_bg;
 
     check_room_transition();
 }

@@ -214,6 +214,18 @@ with open(full_filename, "wb") as info_file:
         info_file.write(no_of_secs.to_bytes(1,"little"))
         # info_file.write(spawn_byte_size.to_bytes(2,"little"))
 
+        parallax_factor_x = float(data["defs"]["layers"][3]["parallaxFactorX"])
+        parallax_factor_y = float(data["defs"]["layers"][3]["parallaxFactorY"])
+        if(parallax_factor_x != 0):
+            parallax_factor_x = int(1 / parallax_factor_x)
+        else: parallax_factor_x = 1
+        if(parallax_factor_y != 0):
+            parallax_factor_y = int(1 / parallax_factor_y)
+        else: parallax_factor_y = 1
+
+        info_file.write(parallax_factor_x.to_bytes(1,"little"))
+        info_file.write(parallax_factor_y.to_bytes(1,"little"))
+
         layer0 = level["layerInstances"][3]
         layer1 = level["layerInstances"][2]
         layer1_edit = level["layerInstances"][1]
