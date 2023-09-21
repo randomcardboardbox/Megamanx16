@@ -31,6 +31,7 @@ extern char spawn_map[];
 extern long map_l0_vram_addr;
 extern long map_l1_vram_addr;
 extern int tile_set_addr;
+extern int tile_set_addr2;
 
 extern char objs_per_chunk;
 extern char bg_parallax_x;

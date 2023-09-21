@@ -23,6 +23,7 @@ char spawn_map[] =  "guts00.stg";
 long map_l0_vram_addr   = 0x06800;
 long map_l1_vram_addr   = 0x07800;
 int tile_set_addr      = 0x088; // mulitply by 8 to get the actual addr
+int tile_set_addr2      = 0x160;
 
 char objs_per_chunk = 3;
 char bg_parallax_x;

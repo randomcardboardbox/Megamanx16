@@ -26,26 +26,25 @@ void init_music_player(void){
     cbm_k_load(MODE, LOADTO);
 
     zsm_init();
-    zsm_startmusic(MUSBANK, LOADTO);
 }
 
 void set_layer_config(void){
     _set_layer0_enable(1);
-    _set_layer1_enable(1);
+    _set_layer1_enable(0);
     _set_sprites_enable(1);
 
     VERA_dc_hscale = 128;
     VERA_dc_vscale = 128;
 
-    L0_CONFIG = 0b01000010;
+    L0_CONFIG = 0b01000001;
     L0_MAPBASE = (map_l0_vram_addr >> 9);
-    L0_TILEBASE = 0b00000011 | ((tile_set_addr>>1)&0b11111100);
+    L0_TILEBASE = 0b00000011 | ((tile_set_addr2>>1)&0b11111100);
 
     L0_HSCROLL_L = 0;
     L0_HSCROLL_H = 0;
     L0_VSCROLL_L = 0;
     L0_VSCROLL_H = 0;
-
+    
     L1_CONFIG = 0b01000010;
     L1_MAPBASE = (map_l1_vram_addr >> 9);
     L1_TILEBASE = 0b00000011 | ((tile_set_addr>>1)&0b11111100);
@@ -88,6 +87,8 @@ void main(void) {
 
     megaman_obj.x = 100;
     megaman_obj.y = 100;
+
+    zsm_startmusic(MUSBANK, LOADTO);
     
     while(1){
         update_megaman();
@@ -95,7 +96,7 @@ void main(void) {
         calc_scroll();
 
         _wait_for_nmi();
-        zsm_play();
+        //zsm_play();
 
         set_scroll();
         _draw_objects(&play_obj_anim_frame, objects);

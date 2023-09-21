@@ -32,7 +32,7 @@ void spawn_bullets(struct ObjectStruct *obj){
     char obj_ind1 = alloc_obj();
     char obj_ind2 = alloc_obj();
     char obj_ind3 = alloc_obj();
-    objects[obj_ind1].y = obj->y;
+    objects[obj_ind1].y = obj->y-6;
     if(obj->status & 0b00000010){
         objects[obj_ind1].x = obj->x+12; 
         objects[obj_ind1].x_vel = 1;
@@ -50,7 +50,7 @@ void spawn_bullets(struct ObjectStruct *obj){
     objects[obj_ind1].draw_ptr = object_defs[2].draw_ptr;
 
 
-    objects[obj_ind2].y = obj->y;
+    objects[obj_ind2].y = obj->y-6;
     objects[obj_ind3].y_vel = 0;
     objects[obj_ind2].y_frac_vel = y_vel;
     if(obj->status & 0b00000010){
@@ -71,7 +71,7 @@ void spawn_bullets(struct ObjectStruct *obj){
 
 
 
-    objects[obj_ind3].y = obj->y;
+    objects[obj_ind3].y = obj->y-6;
     objects[obj_ind3].y_vel = 255;
     objects[obj_ind3].y_frac_vel = y_vel;
     if(obj->status & 0b00000010){

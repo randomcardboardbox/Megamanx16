@@ -23,22 +23,43 @@
         "GUTC05.STG",
         "GUTC06.STG",
 
+        "GUTS00.STG",
+        "GUTS01.STG",
+        "GUTS02.STG",
+        "GUTS03.STG",
+        "GUTS04.STG",
+        "GUTS05.STG",
+        "GUTS06.STG",
+
+        "GUTTHEME.ZSM",
+        "MET.ANM",
+        "MET.PAL",
+        "MET.SPR",
+
+        "BULLET.ANM",
+        "BULLET.PAL",
+        "BULLET.SPR",
+
         "GUTI.STG",
 
-        "GUTR00L1.STG",
-        "GUTR01L1.STG",
-        "GUTR02L1.STG",
-        "GUTR03L1.STG",
-        "GUTR04L1.STG",
-        "GUTR05L1.STG",
-        "GUTR06L1.STG",
+        "GUTR00L10.STG",
+        "GUTR00L11.STG",
+        "GUTR00L12.STG",
+        "GUTR01L10.STG",
+        "GUTR02L10.STG",
+        "GUTR03L10.STG",
+        "GUTR04L10.STG",
+        "GUTR05L10.STG",
+        "GUTR06L10.STG",
         
-        "GUTR00L0.STG",
-        "GUTR01L0.STG",
-        "GUTR02L0.STG",
-        "GUTR03L0.STG",
-        "GUTR04L0.STG",
-        "GUTR05L0.STG",
-        "GUTR06L0.STG"
+        "GUTR00L00.STG",
+        "GUTR00L01.STG",
+        "GUTR00L02.STG",
+        "GUTR01L00.STG",
+        "GUTR02L00.STG",
+        "GUTR03L00.STG",
+        "GUTR04L00.STG",
+        "GUTR05L00.STG",
+        "GUTR06L00.STG"
     ]
 }

@@ -6,6 +6,7 @@ import math
 
 asset_path = r"assets/tilemaps/guts_man_stage_tilemap.ldtk"
 ts_path = r"assets/tilemaps/gut.json"
+ts_bg_path = r"assets/tilemaps/gut2.json"
 filename = "x16_file_sys/GUT"
 extension = ".STG"
 init_pal_offset = 2
@@ -28,36 +29,42 @@ class map_tile:
 
 def write_bytes(tile_id, flip_bits, pal_offset, file):
     byte0 = (tile_id%256).to_bytes(1, "little")
-    byte1 = (((tile_id >> 8) & 3) | (flip_bits << 2) | (pal_offset << 4)).to_bytes(1, "little")
+    byte1 = (((tile_id >> 8) & 3) | ((flip_bits % 4) << 2) | (pal_offset << 4)).to_bytes(1, "little")
     file.write(byte0)
     file.write(byte1)
 
 def save_tilemap_to_file(tile_arr, tile_map_off, lvl_width, lvl_height, file):
+    ORDER_OF_SAVE = [
+            [0,2,1,3],
+            [1,3,0,2],
+            [2,0,3,1],
+            [3,1,2,0],
+    ]
     if(lvl_width < lvl_height):
         end_tile = min(64, len(tile_arr)-tile_map_off)
         for j in range(tile_map_off, tile_map_off+end_tile):
             for i in range(len(tile_arr[0])):
                 tile = tile_arr[j][i]
-                write_bytes(tile.tile_ids[0], tile.flip_bits, tile.pal_offset, file)
-                write_bytes(tile.tile_ids[2], tile.flip_bits, tile.pal_offset, file)
+                write_bytes(tile.tile_ids[ORDER_OF_SAVE[tile.flip_bits][0]], tile.flip_bits, tile.pal_offset, file)
+                write_bytes(tile.tile_ids[ORDER_OF_SAVE[tile.flip_bits][1]], tile.flip_bits, tile.pal_offset, file)
 
             for i in range(len(tile_arr[0])):
                 tile = tile_arr[j][i]
-                write_bytes(tile.tile_ids[1], tile.flip_bits, tile.pal_offset, file)
-                write_bytes(tile.tile_ids[3], tile.flip_bits, tile.pal_offset, file)
+                write_bytes(tile.tile_ids[ORDER_OF_SAVE[tile.flip_bits][2]], tile.flip_bits, tile.pal_offset, file)
+                write_bytes(tile.tile_ids[ORDER_OF_SAVE[tile.flip_bits][3]], tile.flip_bits, tile.pal_offset, file)
 
     else:
         end_tile = min(64, len(tile_arr[0])-tile_map_off)
         for i in range(tile_map_off, tile_map_off+end_tile):
             for j in range(len(tile_arr)):
                 tile = tile_arr[j][i]
-                write_bytes(tile.tile_ids[0], tile.flip_bits, tile.pal_offset, file)
-                write_bytes(tile.tile_ids[2], tile.flip_bits, tile.pal_offset, file)
-            
+                write_bytes(tile.tile_ids[ORDER_OF_SAVE[tile.flip_bits][0]], tile.flip_bits, tile.pal_offset, file)
+                write_bytes(tile.tile_ids[ORDER_OF_SAVE[tile.flip_bits][1]], tile.flip_bits, tile.pal_offset, file)
+                
             for j in range(len(tile_arr)):
                 tile = tile_arr[j][i]
-                write_bytes(tile.tile_ids[1], tile.flip_bits, tile.pal_offset, file)
-                write_bytes(tile.tile_ids[3], tile.flip_bits, tile.pal_offset, file)
+                write_bytes(tile.tile_ids[ORDER_OF_SAVE[tile.flip_bits][2]], tile.flip_bits, tile.pal_offset, file)
+                write_bytes(tile.tile_ids[ORDER_OF_SAVE[tile.flip_bits][3]], tile.flip_bits, tile.pal_offset, file)
 
 def save_collision_to_file(tile_arr, lvl_width, lvl_height, file):
     if(lvl_width < lvl_height):
@@ -74,12 +81,14 @@ def save_collision_to_file(tile_arr, lvl_width, lvl_height, file):
                 byte = tile.coll_data.to_bytes(1, "little")
                 file.write(byte)
     
-def append_tile_to_arr(grid_tile, arr, coll_arr):
-    tile_ids = metatiles[grid_tile["t"]]
+def append_tile_to_arr(grid_tile, arr, coll_arr, tile_def):
+    tile_ids = tile_def[grid_tile["t"]]
     
     pal_off = 0
-    if(grid_tile["t"] in pall_off0_tiles): pal_off = 0
-    if(grid_tile["t"] in pall_off1_tiles): pal_off = 1
+    for i in range(len(pall_offsets)):
+        if(grid_tile["t"] in pall_offsets[i]):
+            pal_off = i
+            break
 
 
     if(grid_tile["t"] in coll_arr): coll_data = 255
@@ -91,16 +100,16 @@ def append_tile_to_arr(grid_tile, arr, coll_arr):
     arr[pos[1]][pos[0]] = new_tile
         
 
-def parse_level(tile_sec, grid_tiles, lvl_width, lvl_height, tileset, file, overwrite_tile_map=None):
+def parse_level(tile_sec, grid_tiles, lvl_width, lvl_height, tset, file, tile_def, overwrite_tile_map=None):
     tile_arr = [[map_tile([0,0,0,0],0) for i in range(lvl_width)] for j in range(lvl_height)]
-    coll_arr = find_enum(tileset["enumTags"], "Wall")["tileIds"]
+    coll_arr = find_enum(tset["enumTags"], "Wall")["tileIds"]
     
     for grid_tile in grid_tiles:
-        append_tile_to_arr(grid_tile, tile_arr, coll_arr)
+        append_tile_to_arr(grid_tile, tile_arr, coll_arr, tile_def)
 
     if(overwrite_tile_map is not None):
         for overwrite_tile in overwrite_tile_map:
-            append_tile_to_arr(overwrite_tile, tile_arr, coll_arr)
+            append_tile_to_arr(overwrite_tile, tile_arr, coll_arr, tile_def)
 
     save_tilemap_to_file(tile_arr, tile_sec*64, lvl_width, lvl_height, file)
     return(tile_arr)
@@ -119,6 +128,20 @@ def find_entity_field(entity_fields, key):
             return(field)
     else:
         return(None)
+    
+def find_level(levels, lvl_str):
+    for level in levels:
+        if(level["__identifier"] == lvl_str):
+            return(level)
+        
+    return(None)
+
+def find_tileset(tilesets, tile_str):
+    for tileset in tilesets:
+        if(tileset["identifier"] == tile_str):
+            return(tileset)
+        
+    return(None)
 
 def parse_entities(entities, lvl_width, lvl_height, file):
     obj_arr = []
@@ -161,20 +184,37 @@ def parse_entities(entities, lvl_width, lvl_height, file):
                 file.write((0).to_bytes(6, "little"))
     
 
+def get_palette_offsets():
+    pall_offsets = []
+    MAX_PAL_OFFSETS = 16
+    for i in range(MAX_PAL_OFFSETS):
+        pal_str = "PALOFF" + str(i)
+        pal_arr = find_enum(tileset["enumTags"], pal_str)
+        if(pal_arr is None):
+            return(pall_offsets)
+
+        pall_offsets.append(pal_arr["tileIds"])
+
+    return(pall_offsets)
+
 with open(asset_path, "r") as f:
     data = json.load(f)
 
 levels = data["levels"]
 
-tileset = data["defs"]["tilesets"][0]
+tileset = find_tileset(data["defs"]["tilesets"], "Tileset1")
+tileset_bg = find_tileset(data["defs"]["tilesets"], "Tileset2")
 tile_size = int(tileset["tileGridSize"])
 
 metatiles = []
 with open(ts_path, "r") as f:
     metatiles = json.load(f)
 
-pall_off0_tiles = find_enum(tileset["enumTags"], "PALOFF0")["tileIds"]
-pall_off1_tiles = find_enum(tileset["enumTags"], "PALOFF1")["tileIds"]
+metatiles_bg = []
+with open(ts_bg_path, "r") as f:
+    metatiles_bg = json.load(f)
+
+pall_offsets = get_palette_offsets()
 
 # create information file for level
 full_filename = filename + "I" + extension
@@ -226,9 +266,9 @@ with open(full_filename, "wb") as info_file:
         info_file.write(parallax_factor_x.to_bytes(1,"little"))
         info_file.write(parallax_factor_y.to_bytes(1,"little"))
 
-        layer0 = level["layerInstances"][3]
-        layer1 = level["layerInstances"][2]
-        layer1_edit = level["layerInstances"][1]
+        layer0 = find_level(level["layerInstances"], "Layer0")
+        layer1 = find_level(level["layerInstances"], "Layer1")
+        layer1_edit = find_level(level["layerInstances"], "Layer1_Edit")
 
 
         entities = level["layerInstances"][0]
@@ -243,12 +283,12 @@ with open(full_filename, "wb") as info_file:
             full_filename = filename + "R" + str(i).zfill(2) + "L" + "0" + str(j) + extension
             with open(full_filename, "wb") as f:
                 f.write((0).to_bytes(2, "little"))
-                parse_level(j, layer0["gridTiles"], lvl_width, lvl_height, tileset, f)
+                parse_level(j, layer0["gridTiles"], lvl_width, lvl_height, tileset_bg, f, metatiles_bg)
 
             full_filename = filename + "R" + str(i).zfill(2) + "L" + "1" + str(j) + extension
             with open(full_filename, "wb") as f:
                 f.write((0).to_bytes(2, "little"))
-                tile_arr = parse_level(j, layer1["autoLayerTiles"], lvl_width, lvl_height, tileset, f, layer1_edit["gridTiles"])
+                tile_arr = parse_level(j, layer1["autoLayerTiles"], lvl_width, lvl_height, tileset, f, metatiles, layer1_edit["gridTiles"])
 
         full_filename = filename + "C" + str(i).zfill(2) + extension
         with open(full_filename, "wb") as f:

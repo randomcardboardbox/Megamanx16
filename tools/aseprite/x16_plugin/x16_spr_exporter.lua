@@ -107,13 +107,25 @@ function call_exporter()
                     file:write(string.char(col_ind))
                 end
             end
-        else
+        elseif(dialog.data.spr_bpp == "4") then
             for j=0, img.height-1, 1 do
                 for i=0, (img.width/2)-1, 1 do
                     col_ind1 = img:getPixel(i*2,j)
                     col_ind2 = img:getPixel(i*2+1,j)
 
                     local byte = (col_ind2%16) | ((col_ind1%16) << 4)
+                    file:write(string.char(byte))
+                end
+            end
+        elseif(dialog.data.spr_bpp == "2") then
+            for j=0, img.height-1, 1 do
+                for i=0, (img.width/4)-1, 1 do
+                    col_ind1 = img:getPixel(i*4,j)
+                    col_ind2 = img:getPixel(i*4+1,j)
+                    col_ind3 = img:getPixel(i*4+2,j)
+                    col_ind4 = img:getPixel(i*4+3,j)
+
+                    local byte = (col_ind4%4) | ((col_ind3%4) << 2) | ((col_ind2%4) << 4) | ((col_ind1%4) << 6)
                     file:write(string.char(byte))
                 end
             end
@@ -261,7 +273,8 @@ function call_exporter()
                             num_spr_tiles = num_spr_tiles + 1
                             table.insert(frames[#frames], {curr_spr_x + cel.position.x, curr_spr_y + cel.position.y, curr_tile_width, curr_tile_height, mem_addr})
                             if(dialog.data.spr_bpp == "8") then mem_addr = mem_addr + (curr_tile_width*curr_tile_height)
-                            else mem_addr = mem_addr + (curr_tile_width*curr_tile_height) /2 end
+                            elseif(dialog.data.spr_bpp == "4") then mem_addr = mem_addr + (curr_tile_width*curr_tile_height) /2 
+                            else mem_addr = mem_addr + (curr_tile_width*curr_tile_height) /4 end
                         else
                             parse_micro_spr_data(file, cel, curr_spr_x, curr_spr_y, curr_tile_width/2, curr_tile_height/2)
                             parse_micro_spr_data(file, cel, curr_spr_x+(curr_tile_width/2), curr_spr_y, curr_tile_width/2, curr_tile_height/2)
@@ -307,7 +320,8 @@ function call_exporter()
 
                     table.insert(frames[#frames], {tile[1] + cel.position.x, tile[2] + cel.position.y, tile[3], tile[4], mem_addr})
                     if(dialog.data.spr_bpp == "8") then mem_addr = mem_addr + (tile[3]*tile[4])
-                    else mem_addr = mem_addr + (tile[3]*tile[4]) /2 end
+                    elseif(dialog.data.spr_bpp == "4") then mem_addr = mem_addr + (tile[3]*tile[4]) /2 
+                    else mem_addr = mem_addr + (tile[3]*tile[4]) /4 end
                 end
             end
 
@@ -428,6 +442,11 @@ function call_exporter()
                         file:write(string.char(0))
                     end
                 end
+                if(dialog.data.spr_bpp == "2") then
+                    for i=1, size/4, 1 do
+                        file:write(string.char(0))
+                    end
+                end
             end
 
 
@@ -520,7 +539,7 @@ function call_exporter()
         id="spr_bpp",
         label="Bits per pixel",
         option=active_spr.properties(plugin_key).spr_bpp,
-        options={ "4", "8"},
+        options={ "2", "4", "8"},
         onchange = function()
             active_spr.properties(plugin_key).spr_bpp = dialog.data.spr_bpp
         end
