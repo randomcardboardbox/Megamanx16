@@ -30,7 +30,7 @@ void init_music_player(void){
 
 void set_layer_config(void){
     _set_layer0_enable(1);
-    _set_layer1_enable(0);
+    _set_layer1_enable(1);
     _set_sprites_enable(1);
 
     VERA_dc_hscale = 128;

@@ -24,7 +24,7 @@ void g_init_load_assets(void){
 
     met_anim_addr = (int*) malloc(0x500);
     _load_palette_from_file(&met_pal_fname, 7, 6);
-    // _load_file_into_vram(met_spr_fname, 7, met_spr_addr>>12, met_spr_addr<<4);
+    _load_file_into_vram(met_spr_fname, 7, met_spr_addr>>12, met_spr_addr<<4);
     _load_file_into_ram(met_anim_fname, 7, met_anim_addr);
 
 
@@ -32,7 +32,7 @@ void g_init_load_assets(void){
 
     bullet_anim_addr = (int*) malloc(0x210);
     _load_palette_from_file(&bullet_pal_fname, 10, 7);
-    // _load_file_into_vram(bullet_spr_fname, 10, bullet_spr_addr>>12, bullet_spr_addr<<4);
+    _load_file_into_vram(bullet_spr_fname, 10, bullet_spr_addr>>12, bullet_spr_addr<<4);
     _load_file_into_ram(bullet_anim_fname, 10, bullet_anim_addr);
 }
 
