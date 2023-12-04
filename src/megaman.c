@@ -7,11 +7,11 @@
 //TODO: reimplement terminal velocity
 //TODO: add gradual deceleration
 
-int m_bullet_spr_addr = 0x1CC8;
+int m_bullet_spr_addr = 0x1D00;
 struct MegamanStruct megaman_obj;
 
 void m_bullet_update(char obj_ind){
-
+    _m_apply_velocity(&objects[obj_ind]);
 }
 
 void m_bullet_draw(char obj_ind){
@@ -36,7 +36,7 @@ void load_megaman_spr_data(){
     _load_file_into_vram(m_spr_filename, 11, 0, 0x0000);
     _load_file_into_ram(m_anim_filename, 11, m_anim_addr);
 
-    _load_palette_from_file(bullet_pal_filename, 11, 1);
+    _load_palette_from_file(bullet_pal_filename, 11, 3);
     _load_file_into_vram(bullet_filename, 11, m_bullet_spr_addr>>12, m_bullet_spr_addr<<4);
     _load_file_into_ram(bullet_anim_filename, 11, m_bullet_addr);
 
@@ -52,14 +52,16 @@ void load_megaman_spr_data(){
     megaman_obj.frame = 0;
 
     //setting up megaman bullet object data
-    object_defs[2].anim_addr = m_bullet_addr;
-    object_defs[2].num_of_sprs = 1;
-    object_defs[2].spr_addr = m_bullet_spr_addr;
-    object_defs[2].pal_off = 2;
-    object_defs[2].update_ptr = m_bullet_update;
-    object_defs[2].draw_ptr = m_bullet_draw;
-    object_defs[2].spr_width = 16;
-    object_defs[2].spr_height = 16;
+    object_defs[3].anim_addr = m_bullet_addr;
+    object_defs[3].num_of_sprs = 1;
+    object_defs[3].spr_addr = m_bullet_spr_addr;
+    object_defs[3].pal_off = 3;
+    object_defs[3].update_ptr = m_bullet_update;
+    object_defs[3].draw_ptr = m_bullet_draw;
+    object_defs[3].spr_width = 16;
+    object_defs[3].spr_height = 16;
+    object_defs[3].width = 8;
+    object_defs[3].height = 8;
 }
 
 void check_collision(){
@@ -190,6 +192,41 @@ void hurt_megaman(char dir, char health_decrease){
     }
 }
 
+char was_pressing_b = 0;
+// char 
+void shoot_check(int joystick){
+    #define m_bullet_obj_ind 3
+
+    char bullet_left_speed = 255-4;  // check game for actual value
+    char bullet_right_speed = 4;
+
+    if(get_pressed(joystick, JOY_B) && !was_pressing_b){
+        char obj_ind = alloc_obj();
+
+        was_pressing_b = 1;
+
+        objects[obj_ind].obj_type_ref = m_bullet_obj_ind;
+        objects[obj_ind].spr_ind = alloc_sprites(object_defs[m_bullet_obj_ind].num_of_sprs);
+        objects[obj_ind].spawn_id = 0;
+        objects[obj_ind].update_ptr = object_defs[m_bullet_obj_ind].update_ptr;
+        objects[obj_ind].draw_ptr = object_defs[m_bullet_obj_ind].draw_ptr;
+
+        objects[obj_ind].x = megaman_obj.x;
+        objects[obj_ind].y = megaman_obj.y;
+
+        if(megaman_obj.status & 0b00000010){
+            objects[obj_ind].x_vel = bullet_right_speed;
+        }
+        else{
+            objects[obj_ind].x_vel = bullet_left_speed;
+        }
+    }
+    
+    if(!get_pressed(joystick, JOY_B)){
+        was_pressing_b = 0;
+    }
+}
+
 void update_megaman(){
     int term_vel = 10;
     int old_pos_x = megaman_obj.x;
@@ -225,6 +262,8 @@ void update_megaman(){
         }
     }
     else{
+        shoot_check(joystick);
+
         if(get_pressed(joystick, JOY_RIGHT)){
             if(megaman_obj.status & 0b00000001){
                 megaman_obj.x_frac_vel += 13;
@@ -345,7 +384,7 @@ void update_megaman(){
         if((megaman_obj.status & 0b00000010) == 0){
             is_reverse = 1;
         }
-        
+    
 
         if(((megaman_obj.status & 0b00000001) > 0) & ((megaman_obj.status & 0b00000100) > 0)){
             play_anim(14, m_run_anim, &megaman_obj);

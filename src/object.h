@@ -17,7 +17,7 @@ struct ObjectStruct
     char spawn_id;
 
     char health;
-    char status;
+    char status; // -/-/-/-/ is_invincible / direction / is_grounded
 
     int anim_timer;
     char frame;
