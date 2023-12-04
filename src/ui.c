@@ -95,6 +95,7 @@ void init_ui(){
     object_defs[1].draw_ptr = null_update;
     object_defs[1].spr_width = 32;
     object_defs[1].spr_height = 32;
+    object_defs[1].interaction_type = 0;
 
     health_bar_obj.x = 20;
     health_bar_obj.y = 20;
@@ -109,6 +110,7 @@ void init_ui(){
     object_defs[2].draw_ptr = null_update;
     object_defs[2].spr_width = 16;
     object_defs[2].spr_height = 16;
+    object_defs[2].interaction_type = 0;
 
 
     for(i=0; i<7; i++){

@@ -10,7 +10,7 @@ void bullet_update(char obj_ind){
     char collided_with_mm = _collided_with_megaman(&objects[obj_ind]);
     char anim[] = {0,1,2,3,4,5};
     _m_apply_velocity(&objects[obj_ind]);
-    play_obj_anim(6, anim, obj_ind);
+    // play_obj_anim(6, anim, obj_ind);
 
     if(collided_with_mm != 0){
         char dir = _megaman_dir(&objects[obj_ind]);

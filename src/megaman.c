@@ -10,8 +10,22 @@
 int m_bullet_spr_addr = 0x1D00;
 struct MegamanStruct megaman_obj;
 
+char m_bullet_anim[] = {0,1,2,3};
 void m_bullet_update(char obj_ind){
+    int i = 0;
+
     _m_apply_velocity(&objects[obj_ind]);
+    // play_obj_anim(4, m_bullet_anim, obj_ind);
+
+
+    // for(i=0; i<no_of_objs; i++){
+    //     // if(obj_alloc_table[i] == 0){
+    //     //     continue; }
+
+    //     if(object_defs[objects[i].obj_type_ref].interaction_type == 1){
+            
+    //     }
+    // }
 }
 
 void m_bullet_draw(char obj_ind){
@@ -62,6 +76,7 @@ void load_megaman_spr_data(){
     object_defs[3].spr_height = 16;
     object_defs[3].width = 8;
     object_defs[3].height = 8;
+    object_defs[3].interaction_type = 3;
 }
 
 void check_collision(){

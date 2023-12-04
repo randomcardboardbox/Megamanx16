@@ -95,7 +95,7 @@ void main(void) {
     
     while(1){
         update_megaman();
-        update_ui();
+        // update_ui();
         _update_objects(objects, scroll_x, &dealloc_obj);
         calc_scroll();
 
@@ -103,7 +103,8 @@ void main(void) {
         //zsm_play();
 
         set_scroll();
-        _draw_objects(&play_obj_anim_frame, objects);
+        // _draw_objects(&play_obj_anim_frame, objects);
+        draw_objects();
         animate_megaman();
     }
 }

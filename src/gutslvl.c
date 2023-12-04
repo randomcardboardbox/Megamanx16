@@ -49,6 +49,7 @@ void g_init_obj_refs(void){
     object_defs[4].spr_height = 32;
     object_defs[4].width = 7;
     object_defs[4].height = 7;
+    object_defs[4].interaction_type = 1;
 
 
     //set bullet object information
@@ -62,6 +63,7 @@ void g_init_obj_refs(void){
     object_defs[5].spr_height = 8;
     object_defs[5].width = 4;
     object_defs[5].height = 4;
+    object_defs[4].interaction_type = 4;
 }
 
 void g_init_lvl(void){

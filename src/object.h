@@ -50,6 +50,7 @@ struct ObjectReferenceStruct
     char spr_height;
     char width;
     char height;
+    char interaction_type; //0 - uninteractable, 1 - enemies, 2 - items, 3 - player bullets, 4, enemy bullets
 };
 
 void draw_objs(void);
@@ -67,5 +68,7 @@ void check_despawn(char obj_ind);
 extern void _update_objects(int obj_arr_addr, int scroll_x, void (*dealloc_func)(char));
 extern void _draw_objects(void (*draw_func)(char), int obj_arr_addr);
 
+void update_objects();
+void draw_objects();
 
 #endif//OBJECT

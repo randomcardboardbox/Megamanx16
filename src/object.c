@@ -43,14 +43,23 @@ void dealloc_obj(char obj_ind){
     obj_alloc_table[obj_ind] = 0;
 }
 
-void draw_objs(void){
+char draw_even_objs = 1;
+void draw_objects(void){
     char i = 0;
 
-    for(i=0; i<no_of_objs; i++){
+    for(i=draw_even_objs; i<no_of_objs; i+=2){
         if(obj_alloc_table[i] == 0){
             continue; }
 
-        object_defs[objects[i].obj_type_ref].draw_ptr(i);
+        // object_defs[objects[i].obj_type_ref].draw_ptr(i);
+        play_obj_anim_frame(i);
+    }
+
+    if(draw_even_objs){
+        draw_even_objs = 0;
+    }
+    else{
+        draw_even_objs = 1;
     }
 }
 
