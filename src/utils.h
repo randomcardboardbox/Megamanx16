@@ -40,6 +40,7 @@ void dealloc_sprites(char index);
 
 void play_anim_frame(struct MegamanStruct *obj);
 void play_obj_anim_frame(char obj_ind);
+void play_obj_struct_anim_frame(struct ObjectStruct *obj, char ui_transform);
 
 void play_anim(char num_of_frames, char *anim_ram_addr, struct MegamanStruct *obj);
 void play_obj_anim(char num_of_frames, char *anim_ram_addr, char obj_ind);

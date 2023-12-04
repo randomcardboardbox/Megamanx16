@@ -9,7 +9,7 @@ ts_path = r"assets/tilemaps/gut.json"
 ts_bg_path = r"assets/tilemaps/gut2.json"
 filename = "x16_file_sys/GUT"
 extension = ".STG"
-init_pal_offset = 2
+init_pal_offset = 4
 dir_arr = [None, "Right", "Left", "Up", "Down"]
 OBJS_PER_CHUNK = 3
 

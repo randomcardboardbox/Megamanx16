@@ -7,14 +7,28 @@
 //TODO: reimplement terminal velocity
 //TODO: add gradual deceleration
 
+int m_bullet_spr_addr = 0x1CC8;
 struct MegamanStruct megaman_obj;
+
+void m_bullet_update(char obj_ind){
+
+}
+
+void m_bullet_draw(char obj_ind){
+
+}
 
 void load_megaman_spr_data(){
     char m_pal_filename[] = "megaman.pal";
     char m_spr_filename[] = "megaman.spr";
     char m_anim_filename[] = "megaman.anm";
 
+    char bullet_filename[] = "mbullet.spr";
+    char bullet_pal_filename[] = "mbullet.pal";
+    char bullet_anim_filename[] = "mbullet.anm";
+
     int *m_anim_addr = (int*) malloc(0x1C00);
+    int *m_bullet_addr = (int*) malloc(0x100);
     char num_of_sprs = 0;
     char spr_ind = 0;
     
@@ -22,6 +36,9 @@ void load_megaman_spr_data(){
     _load_file_into_vram(m_spr_filename, 11, 0, 0x0000);
     _load_file_into_ram(m_anim_filename, 11, m_anim_addr);
 
+    _load_palette_from_file(bullet_pal_filename, 11, 1);
+    _load_file_into_vram(bullet_filename, 11, m_bullet_spr_addr>>12, m_bullet_spr_addr<<4);
+    _load_file_into_ram(bullet_anim_filename, 11, m_bullet_addr);
 
     num_of_sprs = *m_anim_addr;
     spr_ind = alloc_sprites(num_of_sprs);
@@ -33,6 +50,16 @@ void load_megaman_spr_data(){
     megaman_obj.anim_timer = 0;
     megaman_obj.anim_index = 0;
     megaman_obj.frame = 0;
+
+    //setting up megaman bullet object data
+    object_defs[2].anim_addr = m_bullet_addr;
+    object_defs[2].num_of_sprs = 1;
+    object_defs[2].spr_addr = m_bullet_spr_addr;
+    object_defs[2].pal_off = 2;
+    object_defs[2].update_ptr = m_bullet_update;
+    object_defs[2].draw_ptr = m_bullet_draw;
+    object_defs[2].spr_width = 16;
+    object_defs[2].spr_height = 16;
 }
 
 void check_collision(){
@@ -132,7 +159,7 @@ char megaman_hurt = 0;
 char megaman_invinc = 0;
 char m_invnc_timer = 0;
 
-void hurt_megaman(char dir){
+void hurt_megaman(char dir, char health_decrease){
     if(!megaman_invinc){
         m_invnc_timer = 110;
         megaman_invinc = 1;
@@ -140,6 +167,13 @@ void hurt_megaman(char dir){
         megaman_obj.anim_index = 0;
         megaman_obj.anim_timer = 0;
         megaman_obj.frame = 20;
+
+        if(megaman_obj.health<health_decrease){
+            megaman_obj.health = 0;
+        }
+        else{
+            megaman_obj.health -= health_decrease;
+        }
 
         is_holding_jump = 0;
 

@@ -6,6 +6,7 @@
 #include "globals.h"
 #include "utils.h"
 #include "megaman.h"
+#include "ui.h"
 #include "scroll.h"
 
 #include "object.h"
@@ -68,6 +69,7 @@ void main(void) {
 
     _init_irq_handler();
     load_megaman_spr_data();
+    init_ui();
 
     set_layer_config();
 
@@ -87,11 +89,13 @@ void main(void) {
 
     megaman_obj.x = 100;
     megaman_obj.y = 100;
+    megaman_obj.health = 28;
 
     zsm_startmusic(MUSBANK, LOADTO);
     
     while(1){
         update_megaman();
+        update_ui();
         _update_objects(objects, scroll_x, &dealloc_obj);
         calc_scroll();
 

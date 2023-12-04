@@ -351,7 +351,7 @@ function call_exporter()
         bytes[8] = ((get_spr_size_byte(tile[4]) << 6) | (get_spr_size_byte(tile[3]) << 4)) % 256
         
         if(reverse == true) then bytes[7] = bytes[7] | 1 end
-        if(dialog.data.spr_bpp == "8") then byte[2] = (byte[2] | 128) end
+        if(dialog.data.spr_bpp == "8") then bytes[2] = (bytes[2] | 128) end
     end
 
     function parse_anim_data(file, num_of_sprites, frames)

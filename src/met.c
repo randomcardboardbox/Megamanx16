@@ -14,7 +14,7 @@ void bullet_update(char obj_ind){
 
     if(collided_with_mm != 0){
         char dir = _megaman_dir(&objects[obj_ind]);
-        hurt_megaman(dir^0b00000001);
+        hurt_megaman(dir^0b00000001, 2);
     }
 };
 
@@ -24,6 +24,7 @@ void bullet_draw(char obj_ind){
 }
 
 void spawn_bullets(struct ObjectStruct *obj){
+    #define bullet_obj_ind 5
     char vel = 1;
     // char x_vel = 127;
     char y_vel = 127;
@@ -43,11 +44,11 @@ void spawn_bullets(struct ObjectStruct *obj){
         objects[obj_ind1].x_vel = 254;
         objects[obj_ind1].x_frac_vel = 15;
     }
-    objects[obj_ind1].obj_type_ref = 2;
-    objects[obj_ind1].spr_ind = alloc_sprites(object_defs[2].num_of_sprs);
+    objects[obj_ind1].obj_type_ref = bullet_obj_ind;
+    objects[obj_ind1].spr_ind = alloc_sprites(object_defs[bullet_obj_ind].num_of_sprs);
     objects[obj_ind1].spawn_id = 0;
-    objects[obj_ind1].update_ptr = object_defs[2].update_ptr;
-    objects[obj_ind1].draw_ptr = object_defs[2].draw_ptr;
+    objects[obj_ind1].update_ptr = object_defs[bullet_obj_ind].update_ptr;
+    objects[obj_ind1].draw_ptr = object_defs[bullet_obj_ind].draw_ptr;
 
 
     objects[obj_ind2].y = obj->y-6;
@@ -63,11 +64,11 @@ void spawn_bullets(struct ObjectStruct *obj){
         objects[obj_ind2].x_vel = -1;
         objects[obj_ind2].x_frac_vel = 175;
     }
-    objects[obj_ind2].obj_type_ref = 2;
-    objects[obj_ind2].spr_ind = alloc_sprites(object_defs[2].num_of_sprs);
+    objects[obj_ind2].obj_type_ref = bullet_obj_ind;
+    objects[obj_ind2].spr_ind = alloc_sprites(object_defs[bullet_obj_ind].num_of_sprs);
     objects[obj_ind2].spawn_id = 0;
-    objects[obj_ind2].update_ptr = object_defs[2].update_ptr;
-    objects[obj_ind2].draw_ptr = object_defs[2].draw_ptr;
+    objects[obj_ind2].update_ptr = object_defs[bullet_obj_ind].update_ptr;
+    objects[obj_ind2].draw_ptr = object_defs[bullet_obj_ind].draw_ptr;
 
 
 
@@ -84,11 +85,11 @@ void spawn_bullets(struct ObjectStruct *obj){
         objects[obj_ind3].x_vel = -1;
         objects[obj_ind3].x_frac_vel = 175;
     }
-    objects[obj_ind3].obj_type_ref = 2;
-    objects[obj_ind3].spr_ind = alloc_sprites(object_defs[2].num_of_sprs);
+    objects[obj_ind3].obj_type_ref = bullet_obj_ind;
+    objects[obj_ind3].spr_ind = alloc_sprites(object_defs[bullet_obj_ind].num_of_sprs);
     objects[obj_ind3].spawn_id = 0;
-    objects[obj_ind3].update_ptr = object_defs[2].update_ptr;
-    objects[obj_ind3].draw_ptr = object_defs[2].draw_ptr;
+    objects[obj_ind3].update_ptr = object_defs[bullet_obj_ind].update_ptr;
+    objects[obj_ind3].draw_ptr = object_defs[bullet_obj_ind].draw_ptr;
 }
 
 void met_draw(char obj_ind){
@@ -112,7 +113,7 @@ void met_update(char obj_ind){
     char collided_with_mm = _collided_with_megaman(obj);
     if(collided_with_mm != 0){
         char dir = _megaman_dir(obj);
-        hurt_megaman(dir^0b00000001);
+        hurt_megaman(dir^0b00000001, 5);
     }
 
     if(obj->var1 == 0){

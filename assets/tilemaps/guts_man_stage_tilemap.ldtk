@@ -2330,7 +2330,7 @@
 					"max": null,
 					"regex": null,
 					"acceptFileTypes": null,
-					"defaultOverride": { "id": "V_Int", "params": [1] },
+					"defaultOverride": { "id": "V_Int", "params": [4] },
 					"textLanguageMode": null,
 					"symmetricalRef": false,
 					"autoChainRef": true,
@@ -2810,7 +2810,7 @@
 							"px": [424,312],
 							"fieldInstances": [
 								{ "__identifier": "isRight", "__type": "Bool", "__value": true, "__tile": null, "defUid": 138, "realEditorValues": [] },
-								{ "__identifier": "objRef", "__type": "Int", "__value": 1, "__tile": null, "defUid": 139, "realEditorValues": [] }
+								{ "__identifier": "objRef", "__type": "Int", "__value": 4, "__tile": null, "defUid": 139, "realEditorValues": [] }
 							]
 						},
 						{
@@ -2829,7 +2829,7 @@
 							"px": [616,248],
 							"fieldInstances": [
 								{ "__identifier": "isRight", "__type": "Bool", "__value": true, "__tile": null, "defUid": 138, "realEditorValues": [] },
-								{ "__identifier": "objRef", "__type": "Int", "__value": 1, "__tile": null, "defUid": 139, "realEditorValues": [] }
+								{ "__identifier": "objRef", "__type": "Int", "__value": 4, "__tile": null, "defUid": 139, "realEditorValues": [] }
 							]
 						},
 						{
@@ -2848,7 +2848,7 @@
 							"px": [744,184],
 							"fieldInstances": [
 								{ "__identifier": "isRight", "__type": "Bool", "__value": true, "__tile": null, "defUid": 138, "realEditorValues": [] },
-								{ "__identifier": "objRef", "__type": "Int", "__value": 1, "__tile": null, "defUid": 139, "realEditorValues": [] }
+								{ "__identifier": "objRef", "__type": "Int", "__value": 4, "__tile": null, "defUid": 139, "realEditorValues": [] }
 							]
 						}
 					]
@@ -7904,7 +7904,7 @@
 							"px": [552,376],
 							"fieldInstances": [
 								{ "__identifier": "isRight", "__type": "Bool", "__value": true, "__tile": null, "defUid": 138, "realEditorValues": [] },
-								{ "__identifier": "objRef", "__type": "Int", "__value": 1, "__tile": null, "defUid": 139, "realEditorValues": [] }
+								{ "__identifier": "objRef", "__type": "Int", "__value": 4, "__tile": null, "defUid": 139, "realEditorValues": [] }
 							]
 						}
 					]

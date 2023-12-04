@@ -80,6 +80,30 @@ void play_obj_anim_frame(char obj_ind){
     }
 }
 
+void play_obj_struct_anim_frame(struct ObjectStruct *obj, char ui_transform){
+    char is_reverse = 0;
+    int base_addr;
+
+    int x;
+    int y;
+
+    if(ui_transform){
+        x = ((obj->x<<1) | (obj->frac_x>>7)) - object_defs[obj->obj_type_ref].spr_width;
+        y = ((obj->y<<1) | (obj->frac_y>>7)) - object_defs[obj->obj_type_ref].spr_height;
+    }
+    else{
+        x = ((obj->x<<1) | (obj->frac_x>>7)) - object_defs[obj->obj_type_ref].spr_width - scroll_x;
+        y = ((obj->y<<1) | (obj->frac_y>>7)) - object_defs[obj->obj_type_ref].spr_height - scroll_y;
+    }
+
+    if(x < 512 & y < 512 & x > -64 & y > -64){
+
+        if(!(obj->status & 0b00000010)){ is_reverse = 1; }
+        base_addr = (object_defs[obj->obj_type_ref].anim_addr+3)+(is_reverse*8*object_defs[obj->obj_type_ref].num_of_sprs)+(2+16*object_defs[obj->obj_type_ref].num_of_sprs)*obj->frame;
+        _play_obj_anim_frame(x, y, object_defs[obj->obj_type_ref].pal_off, object_defs[obj->obj_type_ref].spr_addr, base_addr, object_defs[obj->obj_type_ref].num_of_sprs, 0xFC00+(obj->spr_ind*8));
+    }
+}
+
 void play_obj_anim(char num_of_frames, char *anim_ram_addr, char obj_ind){
     struct ObjectStruct *obj = &objects[obj_ind];
     

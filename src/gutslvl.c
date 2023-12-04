@@ -37,30 +37,31 @@ void g_init_load_assets(void){
 }
 
 void g_init_obj_refs(void){
+
     //set met object information
-    object_defs[1].anim_addr = met_anim_addr;
-    object_defs[1].num_of_sprs = *met_anim_addr;
-    object_defs[1].pal_off = 6;
-    object_defs[1].spr_addr = met_spr_addr;
-    object_defs[1].update_ptr = met_update;
-    object_defs[1].draw_ptr = met_draw;
-    object_defs[1].spr_width = 32;
-    object_defs[1].spr_height = 32;
-    object_defs[1].width = 7;
-    object_defs[1].height = 7;
+    object_defs[4].anim_addr = met_anim_addr;
+    object_defs[4].num_of_sprs = *met_anim_addr;
+    object_defs[4].pal_off = 6;
+    object_defs[4].spr_addr = met_spr_addr;
+    object_defs[4].update_ptr = met_update;
+    object_defs[4].draw_ptr = met_draw;
+    object_defs[4].spr_width = 32;
+    object_defs[4].spr_height = 32;
+    object_defs[4].width = 7;
+    object_defs[4].height = 7;
 
 
     //set bullet object information
-    object_defs[2].anim_addr = bullet_anim_addr;
-    object_defs[2].num_of_sprs = *bullet_anim_addr;
-    object_defs[2].pal_off = 7;
-    object_defs[2].spr_addr = bullet_spr_addr;
-    object_defs[2].update_ptr = bullet_update;
-    object_defs[2].draw_ptr = bullet_draw;
-    object_defs[2].spr_width = 8;
-    object_defs[2].spr_height = 8;
-    object_defs[2].width = 4;
-    object_defs[2].height = 4;
+    object_defs[5].anim_addr = bullet_anim_addr;
+    object_defs[5].num_of_sprs = *bullet_anim_addr;
+    object_defs[5].pal_off = 7;
+    object_defs[5].spr_addr = bullet_spr_addr;
+    object_defs[5].update_ptr = bullet_update;
+    object_defs[5].draw_ptr = bullet_draw;
+    object_defs[5].spr_width = 8;
+    object_defs[5].spr_height = 8;
+    object_defs[5].width = 4;
+    object_defs[5].height = 4;
 }
 
 void g_init_lvl(void){
@@ -72,7 +73,7 @@ void g_init_lvl(void){
     map_info_addr = malloc(0x100);
 
     _load_file_into_ram(map_info_fname, 8, map_info_addr);  // load map information
-    _load_palette_from_file(pal_fname, 11, 2);
+    _load_palette_from_file(pal_fname, 11, 4);
     _load_file_into_vram(spr_fname, 16, tile_set_addr>>8, tile_set_addr<<8);         // loading tilemap for level
     _load_file_into_vram(spr2_fname, 16, tile_set_addr2>>8, tile_set_addr2<<8);    
 

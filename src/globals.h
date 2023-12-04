@@ -5,7 +5,7 @@
 #include "megaman.h"
 
 #define no_of_objs 30
-#define no_of_objtypes 5
+#define no_of_objtypes 8
 #define lvl_data_bank 1
 #define tile_set_ram_bank 2
 

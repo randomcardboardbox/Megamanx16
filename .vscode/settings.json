@@ -10,5 +10,6 @@
         "met.h": "c",
         "scroll.h": "c"
     },
-    "editor.cursorSmoothCaretAnimation": "on"
+    "editor.cursorSmoothCaretAnimation": "on",
+    "godot_tools.scene_file_config": "c:\\Users\\Redrat209\\Documents\\Megamanx16\\src\\megaman.h"
 }
