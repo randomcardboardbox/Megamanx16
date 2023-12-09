@@ -9,7 +9,7 @@
 
 ; _update_objects(int obj_arr_addr, int obj_def_addr, int scrollx, int func_addr)
 
-NO_OF_OBJs = 30
+NO_OF_OBJs = 20
 OBJ_BYTE_SIZE = 32
 OBJ_DEF_BYTE_SIZE = 14
 

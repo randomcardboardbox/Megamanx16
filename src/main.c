@@ -96,7 +96,8 @@ void main(void) {
     while(1){
         update_megaman();
         // update_ui();
-        _update_objects(objects, scroll_x, &dealloc_obj);
+        // _update_objects(objects, scroll_x, &dealloc_obj);
+        
         calc_scroll();
 
         _wait_for_nmi();

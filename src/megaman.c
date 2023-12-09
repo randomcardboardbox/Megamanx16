@@ -183,7 +183,7 @@ void hurt_megaman(char dir, char health_decrease){
         megaman_hurt = 1;
         megaman_obj.anim_index = 0;
         megaman_obj.anim_timer = 0;
-        megaman_obj.frame = 20;
+        megaman_obj.frame = 16;
 
         if(megaman_obj.health<health_decrease){
             megaman_obj.health = 0;
@@ -246,10 +246,10 @@ void update_megaman(){
     int term_vel = 10;
     int old_pos_x = megaman_obj.x;
     int joystick = _get_joystick_state();
-    char m_run_anim[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14};
-    char m_jump_anim[] = {1,15,16,17,18,19};
-    char m_land_anim[] = {17,16,15,1};
-    char m_hurt_anim[] = {20,  21,22,21,22,21,22,21,22,  23,24,0};
+    char m_run_anim[] = {2,3,4,5,6,7,8,9,10,11};
+    char m_jump_anim[] = {2,12,13,14,15};
+    char m_land_anim[] = {13,12,2};
+    char m_hurt_anim[] = {16,  17,18,17,18,17,18,17,18,  19,0};
 
     char land_anim_check = _check_collision_data(lvl_data_bank, coll_data_addr, megaman_obj.x, megaman_obj.y+24);
 
@@ -272,7 +272,7 @@ void update_megaman(){
         }
     }
     if(megaman_hurt){
-        if(megaman_obj.anim_index == 11){
+        if(megaman_obj.anim_index == 10){
             megaman_hurt = 0;
         }
     }
@@ -393,7 +393,7 @@ void update_megaman(){
 
 
     if(megaman_hurt){
-        play_anim(12, m_hurt_anim, &megaman_obj);
+        play_anim(11, m_hurt_anim, &megaman_obj);
     }
     else{
         if((megaman_obj.status & 0b00000010) == 0){
@@ -402,18 +402,18 @@ void update_megaman(){
     
 
         if(((megaman_obj.status & 0b00000001) > 0) & ((megaman_obj.status & 0b00000100) > 0)){
-            play_anim(14, m_run_anim, &megaman_obj);
+            play_anim(10, m_run_anim, &megaman_obj);
             falling = 1;
         }
         else if((megaman_obj.status & 0b00000001) == 0){
             if(falling){
-                megaman_obj.frame = 16;
+                megaman_obj.frame = 13;
                 megaman_obj.anim_timer = 0;
                 megaman_obj.anim_index = 0;
             }
             else{
                 if(jump_anim == 1){
-                    play_anim(6, m_jump_anim, &megaman_obj);
+                    play_anim(5, m_jump_anim, &megaman_obj);
                     if(megaman_obj.anim_index == 5 || megaman_obj.y_vel < 128){
                         jump_anim = 0;
                         megaman_obj.anim_index = 0;
@@ -421,10 +421,10 @@ void update_megaman(){
                     }
                 }
                 else if(land_anim_check){
-                    play_anim(4, m_land_anim, &megaman_obj);
+                    play_anim(3, m_land_anim, &megaman_obj);
                 }
                 else{
-                    megaman_obj.frame = 19;
+                    megaman_obj.frame = 15;
                     megaman_obj.anim_timer = 0;
                     megaman_obj.anim_index = 0;
                 }
