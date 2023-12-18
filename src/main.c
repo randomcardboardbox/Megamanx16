@@ -6,6 +6,7 @@
 #include "globals.h"
 #include "utils.h"
 #include "megaman.h"
+#include "title_seq.h"
 #include "ui.h"
 #include "scroll.h"
 
@@ -61,17 +62,12 @@ void set_layer_config(void){
     DC_HSTOP = (495 >> 2);
 }
 
-void main(void) {
+void game_update(void) {
     int index = 0;
     char obj_ind;
-    
-    init_music_player();
 
-    _init_irq_handler();
     load_megaman_spr_data();
     init_ui();
-
-    set_layer_config();
 
     g_init_lvl();
     load_map_data();
@@ -96,7 +92,7 @@ void main(void) {
     while(1){
         update_megaman();
         // update_ui();
-        // _update_objects(objects, scroll_x, &dealloc_obj);
+        _update_objects(objects, scroll_x, &dealloc_obj);
         
         calc_scroll();
 
@@ -104,8 +100,20 @@ void main(void) {
         //zsm_play();
 
         set_scroll();
-        // _draw_objects(&play_obj_anim_frame, objects);
         draw_objects();
         animate_megaman();
     }
+} 
+
+
+
+void main(void){
+    init_music_player();
+    _init_irq_handler();
+
+    title_sequence();
+
+    set_layer_config();
+
+    game_update();
 }

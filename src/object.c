@@ -67,6 +67,40 @@ void empty_obj_func(char obj_ind){
 
 }
 
+void update_objects(void){
+    char i = 0;
+
+    for(i=0; i<no_of_objs; i++){
+        int obj_x_pos = (objects[i].x << 1) | (objects[i].frac_x >> 7);
+        
+        if(obj_alloc_table[i] == 0){
+            continue; }
+
+        object_defs[objects[i].obj_type_ref].update_ptr(i);
+        
+        if(objects[i].timer1  > 0){
+        objects[i].timer1 -= 1;}
+        
+        if(objects[i].timer2  > 0){
+        objects[i].timer2 -= 1;}
+
+        if(objects[i].timer3  > 0){
+        objects[i].timer3 -= 1;}
+
+        if(scroll_x > obj_x_pos && scroll_x - obj_x_pos > 520){
+            dealloc_obj(i);
+        }
+        if(scroll_x < obj_x_pos && obj_x_pos - scroll_x > 520){
+            dealloc_obj(i);
+        }
+
+        if(objects[i].y>520 || objects[i].y<0){
+            dealloc_obj(i);
+        }
+        // dealloc_obj()
+    }
+}
+
 void spawn_check(int chunk){
     int i = 0;
 
@@ -110,12 +144,17 @@ char _megaman_dir(struct ObjectStruct *obj){
 }
 
 char _collided_with_megaman(struct ObjectStruct *obj){
+    // TODO: fix collision
     int x = megaman_obj.x;
     int y = megaman_obj.y;
-    char width = object_defs[obj->obj_type_ref].width + 8;
+
+    char width = object_defs[obj->obj_type_ref].width + 4;
     char height = object_defs[obj->obj_type_ref].height + 8;
 
     // char collided = 0;
+    // if(megaman_obj.status & 0b00000010){
+    //     x += 4;}
+    // else{x -= 4;}
 
     if(x > obj->x && x-obj->x > width){
         return(0);

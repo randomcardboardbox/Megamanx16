@@ -163,3 +163,8 @@ void update_ui(){
 
     flush_red_health();
 }
+
+
+void render_text(int text_ptr, char text_size, char spr_num, int x_pos, int y_pos){
+    
+}

@@ -8,7 +8,8 @@
         "gutslvl.h": "c",
         "object.h": "c",
         "met.h": "c",
-        "scroll.h": "c"
+        "scroll.h": "c",
+        "title_seq.h": "c"
     },
     "editor.cursorSmoothCaretAnimation": "on",
     "godot_tools.scene_file_config": "c:\\Users\\Redrat209\\Documents\\Megamanx16\\src\\megaman.h"
