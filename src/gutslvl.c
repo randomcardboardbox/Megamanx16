@@ -6,6 +6,8 @@
 #include "met.h"
 #include "object.h"
 
+#pragma code-name (push, "BANKRAM02")
+
 int *met_anim_addr;
 int met_spr_addr = 0x18C0;
 
@@ -85,3 +87,4 @@ void g_init_lvl(void){
     //set level background
     
 }
+#pragma code-name (pop)

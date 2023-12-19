@@ -6,6 +6,8 @@
 #include "utils.h"
 #include "megaman.h"
 
+#pragma code-name (push, "BANKRAM02")
+
 void bullet_update(char obj_ind){
     char collided_with_mm = _collided_with_megaman(&objects[obj_ind]);
     char anim[] = {0,1,2,3,4,5};
@@ -166,3 +168,5 @@ void met_update(char obj_ind){
         }
     }
 }
+
+#pragma code-name (pop)

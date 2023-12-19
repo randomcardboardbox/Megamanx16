@@ -6,8 +6,8 @@
 
 #define no_of_objs 20
 #define no_of_objtypes 8
-#define lvl_data_bank 1
-#define tile_set_ram_bank 2
+#define lvl_data_bank 16
+#define tile_set_ram_bank 17
 
 extern int scroll_x;
 extern int scroll_y;
@@ -41,5 +41,7 @@ extern struct MegamanStruct megaman_obj;
 
 extern struct ObjectReferenceStruct object_defs[no_of_objtypes];
 extern struct ObjectStruct objects[no_of_objs];
+
+extern char object_code_block;
 
 #endif

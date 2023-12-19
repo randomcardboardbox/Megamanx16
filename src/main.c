@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <cbm.h>
 
 #include "zsmplayer.h"
@@ -14,7 +15,7 @@
 #include "gutslvl.h"
 
 #define MUSNAM "guttheme.zsm"
-#define MUSBANK 10
+#define MUSBANK 30
 #define LFN 0
 #define DEVICE 8
 #define SA 2
@@ -62,20 +63,38 @@ void set_layer_config(void){
     DC_HSTOP = (495 >> 2);
 }
 
+void load_code_segments(){
+    char megaman_code_fname[] = "megaman.prg.01";
+    char level_code_fname[] = "megaman.prg.02";
+    char title_seq_code_fname[] = "megaman.prg.03";
+
+    RAM_BANK_SEL = 1;
+    _load_file_into_ram(megaman_code_fname, 15, RAM_BANK_ADDR);
+
+    RAM_BANK_SEL = 2;
+    _load_file_into_ram(level_code_fname, 15, RAM_BANK_ADDR);
+
+    RAM_BANK_SEL = 3;
+    _load_file_into_ram(title_seq_code_fname, 15, RAM_BANK_ADDR);
+}
+
+
 void game_update(void) {
     int index = 0;
     char obj_ind;
 
+    RAM_BANK_SEL = 1;
     load_megaman_spr_data();
     init_ui();
 
+    RAM_BANK_SEL = 2;
     g_init_lvl();
+
     load_map_data();
 
     for(index=0; index<16; index++){
         spawn_check(index);
     }
-
     for(index=0; index<32; index++){                        // transfer mapbase data into vram
         RAM_BANK_SEL = tile_set_ram_bank+0;
         _load_vert_map_sect(0, 64, 0, index, tile_map0_ram_addr, map_l0_vram_addr);
@@ -90,18 +109,22 @@ void game_update(void) {
     zsm_startmusic(MUSBANK, LOADTO);
     
     while(1){
+        RAM_BANK_SEL = 1;
         update_megaman();
         // update_ui();
+        RAM_BANK_SEL = object_code_block;
         _update_objects(objects, scroll_x, &dealloc_obj);
         
         calc_scroll();
 
         _wait_for_nmi();
-        //zsm_play();
+        RAM_BANK_SEL = 1;
+        animate_megaman();
+
+        zsm_play();
 
         set_scroll();
         draw_objects();
-        animate_megaman();
     }
 } 
 
@@ -110,7 +133,9 @@ void game_update(void) {
 void main(void){
     init_music_player();
     _init_irq_handler();
+    load_code_segments();
 
+    RAM_BANK_SEL = 3;
     title_sequence();
 
     set_layer_config();

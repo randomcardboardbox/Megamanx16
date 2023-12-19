@@ -19,7 +19,7 @@ extern void _set_sprites_enable(char enable);
 
 extern void _load_vert_map_sect(char start_pos, char num_of_tiles, char y_scoll, int pos, int ram_addr, long vram_addr);
 
-extern char _check_collision_data(char ram_bank, int col_data_addr, int x, int y);
+extern char _check_collision_data(char return_bank, char ram_bank, int col_data_addr, int x, int y);
 extern void _transfer_ram_to_vram(int ram_src_addr, int size, char vram_bank, int vram_des_addr);
 extern void _transfer_spr_attr_to_vram(char pal_off, int spr_addr_offset, int x_pos, int y_pos, int ram_src_addr, char vram_bank, int vram_des_addr);
 
@@ -105,6 +105,8 @@ char get_pressed(int joystick, int button);
 
 #define RAM_BANK_SEL (*(char *)0x0000)
 #define ROM_BANK_SEL (*(char *)0x0001)
+
+#define RAM_BANK_ADDR 0xA000
 
 //global variables
 // extern int scroll_x;

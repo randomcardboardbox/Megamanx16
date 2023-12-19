@@ -9,8 +9,49 @@
 
 int m_bullet_spr_addr = 0x1D00;
 struct MegamanStruct megaman_obj;
-
 char m_bullet_anim[] = {0,1,2,3};
+
+char is_holding_jump = 0;
+char was_pressing_a = 0;
+char jump_anim = 0;
+char falling = 1;
+char megaman_hurt = 0;
+char megaman_invinc = 0;
+char m_invnc_timer = 0;
+
+
+void hurt_megaman(char dir, char health_decrease){
+    if(!megaman_invinc){
+        m_invnc_timer = 110;
+        megaman_invinc = 1;
+        megaman_hurt = 1;
+        megaman_obj.anim_index = 0;
+        megaman_obj.anim_timer = 0;
+        megaman_obj.frame = 16;
+
+        if(megaman_obj.health<health_decrease){
+            megaman_obj.health = 0;
+        }
+        else{
+            megaman_obj.health -= health_decrease;
+        }
+
+        is_holding_jump = 0;
+
+        if(dir){
+            megaman_obj.x_vel = -1;
+            megaman_obj.status = megaman_obj.status | 0b00000010;
+        }
+        else{
+            megaman_obj.x_vel = 0;
+            megaman_obj.status = megaman_obj.status & 0b11111101;
+        }
+        megaman_obj.x_frac_vel = 180;
+
+    }
+}
+
+#pragma code-name (push, "BANKRAM02")
 void m_bullet_update(char obj_ind){
     int i = 0;
 
@@ -27,7 +68,10 @@ void m_bullet_update(char obj_ind){
     //     }
     // }
 }
+#pragma code-name(pop)
 
+
+#pragma code-name (push, "BANKRAM01")
 void m_bullet_draw(char obj_ind){
 
 }
@@ -101,14 +145,14 @@ void check_collision(){
     char ver_check_5;
     char ver_check_6;
 
-    ver_check_1 = _check_collision_data(lvl_data_bank, coll_data_addr, ver_x_pos1, ver_y_pos_down);
-    ver_check_2 = _check_collision_data(lvl_data_bank, coll_data_addr, ver_x_pos2, ver_y_pos_down);
+    ver_check_1 = _check_collision_data(1, lvl_data_bank, coll_data_addr, ver_x_pos1, ver_y_pos_down);
+    ver_check_2 = _check_collision_data(1, lvl_data_bank, coll_data_addr, ver_x_pos2, ver_y_pos_down);
 
-    ver_check_3 = _check_collision_data(lvl_data_bank, coll_data_addr, ver_x_pos1, ver_y_pos_up);
-    ver_check_4 = _check_collision_data(lvl_data_bank, coll_data_addr, ver_x_pos2, ver_y_pos_up);
+    ver_check_3 = _check_collision_data(1, lvl_data_bank, coll_data_addr, ver_x_pos1, ver_y_pos_up);
+    ver_check_4 = _check_collision_data(1, lvl_data_bank, coll_data_addr, ver_x_pos2, ver_y_pos_up);
 
-    ver_check_5 = _check_collision_data(lvl_data_bank, coll_data_addr, ver_x_pos1, megaman_obj.y);
-    ver_check_6 = _check_collision_data(lvl_data_bank, coll_data_addr, ver_x_pos2, megaman_obj.y);
+    ver_check_5 = _check_collision_data(1, lvl_data_bank, coll_data_addr, ver_x_pos1, megaman_obj.y);
+    ver_check_6 = _check_collision_data(1, lvl_data_bank, coll_data_addr, ver_x_pos2, megaman_obj.y);
 
     if(ver_check_1 | ver_check_2){
         megaman_obj.y = ((megaman_obj.y-18) & 0b11110000)+21;
@@ -158,52 +202,13 @@ void check_collision(){
     }
 
     
-    check_1 = _check_collision_data(lvl_data_bank, coll_data_addr, x_pos, y_pos1);
-    check_2 = _check_collision_data(lvl_data_bank, coll_data_addr, x_pos, y_pos2);
-    check_3 = _check_collision_data(lvl_data_bank, coll_data_addr, x_pos, y_pos3);
+    check_1 = _check_collision_data(1, lvl_data_bank, coll_data_addr, x_pos, y_pos1);
+    check_2 = _check_collision_data(1, lvl_data_bank, coll_data_addr, x_pos, y_pos2);
+    check_3 = _check_collision_data(1, lvl_data_bank, coll_data_addr, x_pos, y_pos3);
     
     if(check_1 | check_2 | check_3){
         megaman_obj.x = ((megaman_obj.x) & 0b1111111111110000)+8;
         megaman_obj.frac_x = 0;
-    }
-}
-
-char is_holding_jump = 0;
-char was_pressing_a = 0;
-char jump_anim = 0;
-char falling = 1;
-char megaman_hurt = 0;
-char megaman_invinc = 0;
-char m_invnc_timer = 0;
-
-void hurt_megaman(char dir, char health_decrease){
-    if(!megaman_invinc){
-        m_invnc_timer = 110;
-        megaman_invinc = 1;
-        megaman_hurt = 1;
-        megaman_obj.anim_index = 0;
-        megaman_obj.anim_timer = 0;
-        megaman_obj.frame = 16;
-
-        if(megaman_obj.health<health_decrease){
-            megaman_obj.health = 0;
-        }
-        else{
-            megaman_obj.health -= health_decrease;
-        }
-
-        is_holding_jump = 0;
-
-        if(dir){
-            megaman_obj.x_vel = -1;
-            megaman_obj.status = megaman_obj.status | 0b00000010;
-        }
-        else{
-            megaman_obj.x_vel = 0;
-            megaman_obj.status = megaman_obj.status & 0b11111101;
-        }
-        megaman_obj.x_frac_vel = 180;
-
     }
 }
 
@@ -212,7 +217,7 @@ char was_pressing_b = 0;
 void shoot_check(int joystick){
     #define m_bullet_obj_ind 3
 
-    char bullet_left_speed = 255-4;  // check game for actual value
+    char bullet_left_speed = 255-4;  // TODO:check game for actual value
     char bullet_right_speed = 4;
 
     if(get_pressed(joystick, JOY_B) && !was_pressing_b){
@@ -251,7 +256,7 @@ void update_megaman(){
     char m_land_anim[] = {13,12,2};
     char m_hurt_anim[] = {16,  17,18,17,18,17,18,17,18,  19,0};
 
-    char land_anim_check = _check_collision_data(lvl_data_bank, coll_data_addr, megaman_obj.x, megaman_obj.y+24);
+    char land_anim_check = _check_collision_data(1, lvl_data_bank, coll_data_addr, megaman_obj.x, megaman_obj.y+24);
 
     char is_reverse = 0;
     int i=0;
@@ -443,3 +448,4 @@ void update_megaman(){
 void animate_megaman(){
     play_anim_frame(&megaman_obj);
 }
+#pragma code-name (pop)

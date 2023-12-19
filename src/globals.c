@@ -28,3 +28,5 @@ int tile_set_addr2      = 0x160;
 char objs_per_chunk = 3;
 char bg_parallax_x;
 char bg_parallax_y;
+
+char object_code_block = 2;

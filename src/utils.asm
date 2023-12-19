@@ -18,6 +18,7 @@
 .export __get_joystick_state
 .export __init_irq_handler
 .export __force_halt
+.export __render_text
 
 ; TDONE:load file into ram
 ; TDONE:load file into vera
@@ -569,7 +570,7 @@ __load_vert_map_sect:
 
     rts
 
-; _check_collision_data(char ram_bank, int col_data_addr, int x, int y)
+; _check_collision_data(char return_bank, char ram_bank, int col_data_addr, int x, int y)
 ; PS: the x and y values of object positions are made 
 TILE_ADDR = ZP_PTR_1
 RAM_BANK_SEL = $0000
@@ -615,6 +616,15 @@ __check_collision_data:
 
     ; get and return collision data
     lda (TILE_ADDR)
+    pha
+
+    ; return to the correct bank for code execution
+    lda (sp)
+    inc sp
+    sta RAM_BANK_SEL
+
+    pla
+
     rts
 
 ; _transfer_ram_to_vram(int ram_src_addr, int size, char vram_bank, int vram_des_addr)
@@ -876,4 +886,130 @@ __get_joystick_state:
 
 __force_halt:
     brk
+    rts
+
+; render_text(char palette_off, int font_spr_addr, int text_ptr, int x_pos, int y_pos, char text_size, int spr_attr_address);
+TEXT_SIZE = ZP_PTR_1
+TEXT_XPOS = ZP_PTR_2
+TEXT_YPOS = ZP_PTR_4
+TEXT_ADDR = ZP_PTR_6
+TEXT_PAL_OFF = ZP_PTR_10
+FONT_SPR_ADDR = ZP_PTR_8
+CURR_CHAR_ADDR = ZP_PTR_11
+__render_text:
+    stz VERA_ctrl
+
+    sta VERA_addr_low
+    stx VERA_addr_high
+
+    lda #%00010001
+    sta VERA_addr_bank
+
+    lda (sp)
+    sta TEXT_SIZE
+    inc sp
+
+    lda (sp)
+    sta TEXT_YPOS
+    inc sp
+    lda (sp)
+    sta TEXT_YPOS+1
+    inc sp
+
+    lda (sp)
+    sta TEXT_XPOS
+    inc sp
+    lda (sp)
+    sta TEXT_XPOS+1
+    inc sp
+
+    lda (sp)
+    sta TEXT_ADDR
+    inc sp
+    lda (sp)
+    sta TEXT_ADDR+1
+    inc sp
+
+    lda (sp)
+    sta FONT_SPR_ADDR
+    inc sp
+    lda (sp)
+    sta FONT_SPR_ADDR+1
+    inc sp
+
+    lda (sp)
+    ora #%01010000
+    sta TEXT_PAL_OFF
+    inc sp
+
+
+    ldy #0
+    @character_render_loop:
+
+
+    ; TODO: allow for arbitrary text address positions 
+    lda (TEXT_ADDR), y
+    sec
+    sbc #$20
+    tax
+
+    lda FONT_SPR_ADDR
+    sta CURR_CHAR_ADDR
+    lda FONT_SPR_ADDR+1
+    sta CURR_CHAR_ADDR+1
+    
+    @loop_add_to_base_addr:
+    lda CURR_CHAR_ADDR
+    clc
+    adc #4
+    sta CURR_CHAR_ADDR
+    lda CURR_CHAR_ADDR+1
+    adc #0
+    sta CURR_CHAR_ADDR+1
+
+    dex
+    cpx #0
+    bne @loop_add_to_base_addr
+    ; /////////////////////////////////////
+
+    ; lda #0
+    ; sta VERA_data0
+    ; sta VERA_data0
+    lda CURR_CHAR_ADDR
+    sta VERA_data0
+    lda CURR_CHAR_ADDR+1
+    sta VERA_data0
+
+
+    lda TEXT_XPOS
+    sta VERA_data0
+    lda TEXT_XPOS+1
+    sta VERA_data0
+
+    lda TEXT_YPOS
+    sta VERA_data0
+    lda TEXT_YPOS+1
+    sta VERA_data0
+
+    lda #%00001100
+    sta VERA_data0
+
+    lda TEXT_PAL_OFF
+    sta VERA_data0
+    
+
+
+    ;increase x position for each character 
+    lda TEXT_XPOS
+    clc
+    adc #16
+    sta TEXT_XPOS
+    lda TEXT_XPOS+1
+    adc #0
+    sta TEXT_XPOS+1
+
+    iny 
+    cpy TEXT_SIZE
+    bne @character_render_loop
+
     rts

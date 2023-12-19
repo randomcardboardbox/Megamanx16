@@ -5,11 +5,24 @@
 #include "ui.h"
 #include <stdlib.h>
 
+#pragma code-name (push, "BANKRAM03")
+
 struct ObjectStruct title1_obj;
 struct ObjectStruct title2_obj;
 struct ObjectStruct title3_obj;
 struct ObjectStruct title4_obj;
 struct ObjectStruct title5_obj;
+
+int *title1_anim_addr;
+int *title2_anim_addr;
+int *title3_anim_addr;
+int *title4_anim_addr;
+
+char spr_ind1 = 0;
+char spr_ind2 = 0;
+char spr_ind3 = 0;
+char spr_ind4 = 0;
+char spr_ind5 = 0;
 
 void title_load_sprites(){
     // TODO: remember to free animation ram addresses
@@ -29,35 +42,30 @@ void title_load_sprites(){
     char font_spr_filename[] = "font.spr";
     char font_pal_filename[] = "font.pal";
 
-    int *title1_anim_addr = (int*) malloc(0x200);
-    int *title2_anim_addr = (int*) malloc(0x200);
-    int *title3_anim_addr = (int*) malloc(0x200);
-    int *title4_anim_addr = (int*) malloc(0x200);
-
-    char spr_ind1 = 0;
-    char spr_ind2 = 0;
-    char spr_ind3 = 0;
-    char spr_ind4 = 0;
-    char spr_ind5 = 0;
     char num_of_sprs1 = 0;
     char num_of_sprs2 = 0;
     char num_of_sprs3 = 0;
     char num_of_sprs4 = 0;
 
+    title1_anim_addr = malloc(0x200);
+    title2_anim_addr = malloc(0x200);
+    title3_anim_addr = malloc(0x200);
+    title4_anim_addr = malloc(0x200);
+
     _load_palette_from_file(title1_pal_filename, 11, 0);
     _load_palette_from_file(title4_pal_filename, 11, 1);
-    _load_file_into_vram(title1_spr_filename, 11, 0, 0x0000);
+    _load_file_into_vram(title1_spr_filename, 11, 0, 0x2800);
 
-    _load_file_into_vram(title2_spr_filename, 11, 0, 0x2000);
-    _load_file_into_vram(title3_spr_filename, 11, 0, 0x8000);
-    _load_file_into_vram(title4_spr_filename, 11, 0, 0xF000);
+    _load_file_into_vram(title2_spr_filename, 11, 0, 0x4800);
+    _load_file_into_vram(title3_spr_filename, 11, 0, 0xA800);
+    _load_file_into_vram(title4_spr_filename, 11, 0, 0xE600);
 
     _load_file_into_ram(title1_anim_filename, 11, title1_anim_addr);
     _load_file_into_ram(title2_anim_filename, 11, title2_anim_addr);
     _load_file_into_ram(title3_anim_filename, 11, title3_anim_addr);
     _load_file_into_ram(title4_anim_filename, 11, title4_anim_addr);
 
-    _load_file_into_vram(font_spr_filename, 9, 1, 0x6000);
+    _load_file_into_vram(font_spr_filename, 9, 0, 0x0000);
     _load_palette_from_file(font_pal_filename, 9, 2);
 
     num_of_sprs1 = *title1_anim_addr;
@@ -80,7 +88,7 @@ void title_load_sprites(){
     title1_obj.status = title1_obj.status | 0b00000010;
     object_defs[1].anim_addr = title1_anim_addr;
     object_defs[1].num_of_sprs = *title1_anim_addr;
-    object_defs[1].spr_addr = 0x0000;
+    object_defs[1].spr_addr = 0x0280;
     object_defs[1].pal_off = 0;
     object_defs[1].update_ptr = 0;
     object_defs[1].draw_ptr = 0;
@@ -96,7 +104,7 @@ void title_load_sprites(){
     title2_obj.status = title2_obj.status | 0b00000010;
     object_defs[2].anim_addr = title2_anim_addr;
     object_defs[2].num_of_sprs = *title2_anim_addr;
-    object_defs[2].spr_addr = 0x0200;
+    object_defs[2].spr_addr = 0x0480;
     object_defs[2].pal_off = 0;
     object_defs[2].update_ptr = 0;
     object_defs[2].draw_ptr = 0;
@@ -112,7 +120,7 @@ void title_load_sprites(){
     title3_obj.status = title3_obj.status | 0b00000010;
     object_defs[3].anim_addr = title3_anim_addr;
     object_defs[3].num_of_sprs = *title3_anim_addr;
-    object_defs[3].spr_addr = 0x0800;
+    object_defs[3].spr_addr = 0x0A80;
     object_defs[3].pal_off = 0;
     object_defs[3].update_ptr = 0;
     object_defs[3].draw_ptr = 0;
@@ -134,7 +142,7 @@ void title_load_sprites(){
     title5_obj.status = title5_obj.status & 0b11111101;
     object_defs[4].anim_addr = title4_anim_addr;
     object_defs[4].num_of_sprs = *title4_anim_addr;
-    object_defs[4].spr_addr = 0x0F00;
+    object_defs[4].spr_addr = 0x0E60;
     object_defs[4].pal_off = 1;
     object_defs[4].update_ptr = 0;
     object_defs[4].draw_ptr = 0;
@@ -170,13 +178,27 @@ void title_draw_sprites(){
 
 void title_draw_text(){
     char start_text[] = "press start";
-    char spr_ind = alloc_sprites(12);
+    char spr_ind = alloc_sprites(11);
 
-    render_text(start_text, 12, spr_ind, 100, 100);
+    
+    _render_text(2, 0x0000, &start_text, 200, 400, 11, 0xFC00+(spr_ind*8));
 }
 
 int title_tile_set_addr      = 0x088; // mulitply by 8 to get the actual addr
 int title_tile_set_addr2      = 0x160;
+
+void free_memory(){
+    free(title1_anim_addr);
+    free(title2_anim_addr);
+    free(title3_anim_addr);
+    free(title4_anim_addr);
+
+    dealloc_sprites(spr_ind1);
+    dealloc_sprites(spr_ind2);
+    dealloc_sprites(spr_ind3);
+    dealloc_sprites(spr_ind4);
+    dealloc_sprites(spr_ind5);
+}
 
 void title_sequence(){
     title_load_sprites();
@@ -202,7 +224,17 @@ void title_sequence(){
     title_draw_text();
 
     while(1){
+        int joystick = _get_joystick_state();
+        
         title_draw_sprites();
         _wait_for_nmi();
+
+        if(get_pressed(joystick, JOY_SRT)){
+            free_memory();
+
+            break;
+        }
     }
 }
+
+#pragma code-name (pop)
