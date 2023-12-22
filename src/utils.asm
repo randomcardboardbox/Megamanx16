@@ -71,6 +71,7 @@ __load_palette_from_file:
     asl
 
     ; adding this value to palette address in vram
+    php
     clc 
     adc #<VRAM_palette
     tax
@@ -78,6 +79,7 @@ __load_palette_from_file:
     ; setting high byte of vram palette accounting for
     ; carry from last operation
     lda #>VRAM_palette
+    plp
     adc #0
     tay
 

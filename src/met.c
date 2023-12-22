@@ -35,6 +35,11 @@ void spawn_bullets(struct ObjectStruct *obj){
     char obj_ind1 = alloc_obj();
     char obj_ind2 = alloc_obj();
     char obj_ind3 = alloc_obj();
+
+    char spr_ind1 = alloc_sprites(object_defs[bullet_obj_ind].num_of_sprs);
+    char spr_ind2 = alloc_sprites(object_defs[bullet_obj_ind].num_of_sprs);
+    char spr_ind3 = alloc_sprites(object_defs[bullet_obj_ind].num_of_sprs);
+
     objects[obj_ind1].y = obj->y-6;
     if(obj->status & 0b00000010){
         objects[obj_ind1].x = obj->x+12; 
@@ -47,7 +52,7 @@ void spawn_bullets(struct ObjectStruct *obj){
         objects[obj_ind1].x_frac_vel = 15;
     }
     objects[obj_ind1].obj_type_ref = bullet_obj_ind;
-    objects[obj_ind1].spr_ind = alloc_sprites(object_defs[bullet_obj_ind].num_of_sprs);
+    objects[obj_ind1].spr_ind = spr_ind1;
     objects[obj_ind1].spawn_id = 0;
     objects[obj_ind1].update_ptr = object_defs[bullet_obj_ind].update_ptr;
     objects[obj_ind1].draw_ptr = object_defs[bullet_obj_ind].draw_ptr;
@@ -67,7 +72,7 @@ void spawn_bullets(struct ObjectStruct *obj){
         objects[obj_ind2].x_frac_vel = 175;
     }
     objects[obj_ind2].obj_type_ref = bullet_obj_ind;
-    objects[obj_ind2].spr_ind = alloc_sprites(object_defs[bullet_obj_ind].num_of_sprs);
+    objects[obj_ind2].spr_ind = spr_ind2;
     objects[obj_ind2].spawn_id = 0;
     objects[obj_ind2].update_ptr = object_defs[bullet_obj_ind].update_ptr;
     objects[obj_ind2].draw_ptr = object_defs[bullet_obj_ind].draw_ptr;
@@ -88,7 +93,7 @@ void spawn_bullets(struct ObjectStruct *obj){
         objects[obj_ind3].x_frac_vel = 175;
     }
     objects[obj_ind3].obj_type_ref = bullet_obj_ind;
-    objects[obj_ind3].spr_ind = alloc_sprites(object_defs[bullet_obj_ind].num_of_sprs);
+    objects[obj_ind3].spr_ind = spr_ind3;
     objects[obj_ind3].spawn_id = 0;
     objects[obj_ind3].update_ptr = object_defs[bullet_obj_ind].update_ptr;
     objects[obj_ind3].draw_ptr = object_defs[bullet_obj_ind].draw_ptr;
@@ -97,6 +102,24 @@ void spawn_bullets(struct ObjectStruct *obj){
 void met_draw(char obj_ind){
     struct ObjectStruct *obj = &objects[obj_ind];
     // play_obj_anim_frame(obj);
+}
+
+void bullet_check(char obj_ind){
+    struct ObjectStruct *obj = &objects[obj_ind];
+    char collision_data = _collision_with_bullet(obj_ind);
+
+    if(collision_data > 0){
+        if(obj->frame > 5 && obj->frame < 10){
+            dealloc_obj(obj_ind);
+            
+            bullet_objects[collision_data-1].obj_type_ref = 0;
+            dealloc_sprites(bullet_objects[collision_data-1].spr_ind);
+        }
+        else{
+            bullet_objects[collision_data-1].obj_type_ref = 0;
+            dealloc_sprites(bullet_objects[collision_data-1].spr_ind);
+        }
+    }
 }
 
 void met_update(char obj_ind){
@@ -167,6 +190,8 @@ void met_update(char obj_ind){
             obj->anim_timer = 0;
         }
     }
+
+    bullet_check(obj_ind);
 }
 
 #pragma code-name (pop)

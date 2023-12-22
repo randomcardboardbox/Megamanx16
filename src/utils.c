@@ -8,16 +8,16 @@
 char spr_alloc_table[128] = {0};
 
 char alloc_sprites(char size){
-    int i=0;
-    int j=0;
-    int init_ind=0;
+    char i=0;
+    char j=0;
+    char init_ind=0;
 
     for (i=0; i<(129-size); i++){
         if(spr_alloc_table[i] != 0){
             init_ind = i+1;
         }
         else{
-            if((i-init_ind)==(size+1)){
+            if((i-init_ind)>(size+1)){
                 spr_alloc_table[init_ind] = size;
                 for (j=1; j<size; j++){
                     spr_alloc_table[init_ind+j] = 1;
@@ -27,18 +27,16 @@ char alloc_sprites(char size){
         }
     }
 
-    // dealloc_sprites(128-size)
-
-    spr_alloc_table[128-size] = size;
+    spr_alloc_table[128-size-1] = size;
     for (j=1; j<size; j++){
-        spr_alloc_table[(128-size)+j] = 1;
+        spr_alloc_table[(128-size-1)+j] = 1;
     }
-    return(127-size);
+    return(127-size-1);
 }
 
 void dealloc_sprites(char index){
-    int i=0;
-    int size=spr_alloc_table[index];
+    char i=0;
+    char size=spr_alloc_table[index];
     // if(size == 0){
     //     size = 1;
     // }
@@ -104,6 +102,8 @@ void play_obj_struct_anim_frame(struct ObjectStruct *obj, char ui_transform){
     }
 }
 
+
+// TODO: Make the play_obj_anim faster: its a bit slow :<
 void play_obj_anim(char num_of_frames, char *anim_ram_addr, char obj_ind){
     struct ObjectStruct *obj = &objects[obj_ind];
     

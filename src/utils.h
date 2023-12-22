@@ -108,6 +108,10 @@ char get_pressed(int joystick, int button);
 
 #define RAM_BANK_ADDR 0xA000
 
+
+
+
+#define NULL_SPRITE 200
 //global variables
 // extern int scroll_x;
 

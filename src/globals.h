@@ -41,6 +41,7 @@ extern struct MegamanStruct megaman_obj;
 
 extern struct ObjectReferenceStruct object_defs[no_of_objtypes];
 extern struct ObjectStruct objects[no_of_objs];
+extern struct ObjectStruct bullet_objects[3];
 
 extern char object_code_block;
 

@@ -23,6 +23,7 @@ char spr_ind2 = 0;
 char spr_ind3 = 0;
 char spr_ind4 = 0;
 char spr_ind5 = 0;
+char text_spr_ind;
 
 void title_load_sprites(){
     // TODO: remember to free animation ram addresses
@@ -178,10 +179,10 @@ void title_draw_sprites(){
 
 void title_draw_text(){
     char start_text[] = "press start";
-    char spr_ind = alloc_sprites(11);
+    text_spr_ind = alloc_sprites(11);
 
     
-    _render_text(2, 0x0000, &start_text, 200, 400, 11, 0xFC00+(spr_ind*8));
+    _render_text(2, 0x0000, &start_text, 200, 400, 11, 0xFC00+(text_spr_ind*8));
 }
 
 int title_tile_set_addr      = 0x088; // mulitply by 8 to get the actual addr
@@ -198,6 +199,7 @@ void free_memory(){
     dealloc_sprites(spr_ind3);
     dealloc_sprites(spr_ind4);
     dealloc_sprites(spr_ind5);
+    dealloc_sprites(text_spr_ind);
 }
 
 void title_sequence(){

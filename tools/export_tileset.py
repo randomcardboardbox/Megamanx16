@@ -81,8 +81,11 @@ def save_collision_to_file(tile_arr, lvl_width, lvl_height, file):
                 byte = tile.coll_data.to_bytes(1, "little")
                 file.write(byte)
     
-def append_tile_to_arr(grid_tile, arr, coll_arr, tile_def):
+def append_tile_to_arr(grid_tile, arr, coll_arr, tile_def, is_bg=False):
     tile_ids = tile_def[grid_tile["t"]]
+
+    pall_offsets = pall_offsets2
+    if(is_bg): pall_offsets = pall_offsets1
     
     pal_off = 0
     for i in range(len(pall_offsets)):
@@ -105,7 +108,10 @@ def parse_level(tile_sec, grid_tiles, lvl_width, lvl_height, tset, file, tile_de
     coll_arr = find_enum(tset["enumTags"], "Wall")["tileIds"]
     
     for grid_tile in grid_tiles:
-        append_tile_to_arr(grid_tile, tile_arr, coll_arr, tile_def)
+        if(overwrite_tile_map is None):
+            append_tile_to_arr(grid_tile, tile_arr, coll_arr, tile_def, is_bg=True)
+        else:
+            append_tile_to_arr(grid_tile, tile_arr, coll_arr, tile_def, is_bg=False)
 
     if(overwrite_tile_map is not None):
         for overwrite_tile in overwrite_tile_map:
@@ -184,12 +190,14 @@ def parse_entities(entities, lvl_width, lvl_height, file):
                 file.write((0).to_bytes(6, "little"))
     
 
-def get_palette_offsets():
+def get_palette_offsets(is_bg=False):
     pall_offsets = []
     MAX_PAL_OFFSETS = 16
     for i in range(MAX_PAL_OFFSETS):
         pal_str = "PALOFF" + str(i)
-        pal_arr = find_enum(tileset["enumTags"], pal_str)
+        if(is_bg): pal_arr = find_enum(tileset_bg["enumTags"], pal_str)
+        else: pal_arr = find_enum(tileset["enumTags"], pal_str)
+
         if(pal_arr is None):
             return(pall_offsets)
 
@@ -214,7 +222,8 @@ metatiles_bg = []
 with open(ts_bg_path, "r") as f:
     metatiles_bg = json.load(f)
 
-pall_offsets = get_palette_offsets()
+pall_offsets1 = get_palette_offsets(is_bg=True)
+pall_offsets2 = get_palette_offsets()
 
 # create information file for level
 full_filename = filename + "I" + extension

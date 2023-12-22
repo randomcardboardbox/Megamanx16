@@ -6,6 +6,9 @@
 
 struct ObjectReferenceStruct object_defs[no_of_objtypes];
 struct ObjectStruct objects[no_of_objs];
+struct ObjectStruct bullet_objects[3];
+
+char enemy_objects[NO_OF_ENEMIES];
 
 char obj_alloc_table[no_of_objs] = {0};
 char spawned_objs_table[50] = {0};
@@ -15,11 +18,13 @@ char alloc_obj(){
     for(i=0; i<no_of_objs; i++){
         if(obj_alloc_table[i] == 0){
             obj_alloc_table[i] = 1;
+            objects[i].spr_ind = NULL_SPRITE;
             return(i);
         }
     }
 
     dealloc_obj(no_of_objs-1);
+    objects[no_of_objs-1].spr_ind = NULL_SPRITE;
     return(no_of_objs-1);
 }
 
@@ -32,12 +37,26 @@ void clear_objs(){
     }
 }
 
+
 void dealloc_obj(char obj_ind){
     struct ObjectStruct object = {0,0,0,0, 0,0,0,0, 0,0, 0,0, 0,0,0,0, 0,0,0, 0,0,0};
 
-    dealloc_sprites(objects[obj_ind].spr_ind);
+    if(objects[obj_ind].spr_ind != NULL_SPRITE){
+        dealloc_sprites(objects[obj_ind].spr_ind);
+    }
     spawned_objs_table[objects[obj_ind].spawn_id] = 0;
 
+    // if(object_defs[objects[obj_ind].obj_type_ref].interaction_type == 1){
+    //     char i = 0;
+    //     for (i=0; i<NO_OF_ENEMIES; i++){
+    //         if(enemy_objects[i] == obj_ind){
+    //             enemy_objects[i] = 127;
+    //             break;
+    //         }
+    //     }
+    // }
+
+    objects[obj_ind].spr_ind = NULL_SPRITE;
     objects[obj_ind] = object;
     objects[obj_ind].obj_type_ref = 0;
     obj_alloc_table[obj_ind] = 0;
@@ -76,6 +95,19 @@ void update_objects(void){
         if(obj_alloc_table[i] == 0){
             continue; }
 
+        if(scroll_x > obj_x_pos && scroll_x - obj_x_pos > 520){
+            dealloc_obj(i);
+            continue;
+        }
+        else if(scroll_x < obj_x_pos && obj_x_pos - scroll_x > 520){
+            dealloc_obj(i);
+            continue;
+        }
+        else if(objects[i].y>512 || objects[i].y<0){
+            dealloc_obj(i);
+            continue;
+        }
+
         object_defs[objects[i].obj_type_ref].update_ptr(i);
         
         if(objects[i].timer1  > 0){
@@ -86,18 +118,6 @@ void update_objects(void){
 
         if(objects[i].timer3  > 0){
         objects[i].timer3 -= 1;}
-
-        if(scroll_x > obj_x_pos && scroll_x - obj_x_pos > 520){
-            dealloc_obj(i);
-        }
-        if(scroll_x < obj_x_pos && obj_x_pos - scroll_x > 520){
-            dealloc_obj(i);
-        }
-
-        if(objects[i].y>520 || objects[i].y<0){
-            dealloc_obj(i);
-        }
-        // dealloc_obj()
     }
 }
 
@@ -123,6 +143,16 @@ void spawn_check(int chunk){
             objects[obj_ind].draw_ptr = object_defs[obj_ref].draw_ptr;
             objects[obj_ind].update_ptr = object_defs[obj_ref].update_ptr;
             spawned_objs_table[spawn_id] = 1;
+
+            // if(object_defs[obj_ref].interaction_type == 1){
+            //     char i = 0;
+            //     for (i=0; i<NO_OF_ENEMIES; i++){
+            //         if(enemy_objects[i] == 127){
+            //             enemy_objects[i] = obj_ind;
+            //             break;
+            //         }
+            //     }
+            // }
         }
     }
 }
@@ -143,18 +173,69 @@ char _megaman_dir(struct ObjectStruct *obj){
     return(0);
 }
 
+// TODO: Untested collision between two objects
+char _collision_with_object(char obj1, char obj2){
+    char width = object_defs[objects[obj1].obj_type_ref].width + object_defs[objects[obj2].obj_type_ref].width;
+    char height = object_defs[objects[obj1].obj_type_ref].height + object_defs[objects[obj2].obj_type_ref].height;
+
+    if(objects[obj1].x > objects[obj2].x && objects[obj1].x-objects[obj2].x > width){
+        return(0);
+    }
+    if(objects[obj1].x < objects[obj2].x && objects[obj2].x-objects[obj1].x > width){
+        return(0);
+    }
+    
+    if(objects[obj1].y > objects[obj2].y && objects[obj1].y-objects[obj2].y > height){
+        return(0);
+    }
+    if(objects[obj1].y < objects[obj1].y && objects[obj2].y-objects[obj1].y > height){
+        return(0);
+    }
+
+    return(1);
+}
+
+char _collision_with_bullet(char obj_ind){
+    char i = 0;
+    char width = object_defs[objects[obj_ind].obj_type_ref].width+2;
+    char height = object_defs[objects[obj_ind].obj_type_ref].height+2;
+
+
+    for (i=0; i<3; i++){
+        if(bullet_objects[i].obj_type_ref == 0){
+            continue;
+        }
+
+        if(objects[obj_ind].x > bullet_objects[i].x && objects[obj_ind].x-bullet_objects[i].x > width){
+            continue;
+        }
+        if(objects[obj_ind].x < bullet_objects[i].x && bullet_objects[i].x-objects[obj_ind].x > width){
+            continue;
+        }
+        
+        if(objects[obj_ind].y > bullet_objects[i].y && objects[obj_ind].y-bullet_objects[i].y > height){
+            continue;
+        }
+        if(objects[obj_ind].y < bullet_objects[i].y && bullet_objects[i].y-objects[obj_ind].y > height){
+            continue;
+        }
+        return(i+1);
+    }
+    return(0);
+}
+
 char _collided_with_megaman(struct ObjectStruct *obj){
     // TODO: fix collision
     int x = megaman_obj.x;
     int y = megaman_obj.y;
 
-    char width = object_defs[obj->obj_type_ref].width + 4;
+    char width = object_defs[obj->obj_type_ref].width + 8;
     char height = object_defs[obj->obj_type_ref].height + 8;
 
-    // char collided = 0;
-    // if(megaman_obj.status & 0b00000010){
-    //     x += 4;}
-    // else{x -= 4;}
+    char collided = 0;
+    if(megaman_obj.status & 0b00000010){
+        x += 2;}
+    else{x -= 2;}
 
     if(x > obj->x && x-obj->x > width){
         return(0);

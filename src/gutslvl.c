@@ -25,7 +25,7 @@ void g_init_load_assets(void){
     char bullet_anim_fname[] = "bullet.anm";
 
     met_anim_addr = (int*) malloc(0x500);
-    _load_palette_from_file(&met_pal_fname, 7, 6);
+    _load_palette_from_file(&met_pal_fname, 7, 8);
     _load_file_into_vram(met_spr_fname, 7, met_spr_addr>>12, met_spr_addr<<4);
     _load_file_into_ram(met_anim_fname, 7, met_anim_addr);
 
@@ -33,7 +33,7 @@ void g_init_load_assets(void){
     //import met data
 
     bullet_anim_addr = (int*) malloc(0x210);
-    _load_palette_from_file(&bullet_pal_fname, 10, 7);
+    _load_palette_from_file(&bullet_pal_fname, 10, 9);
     _load_file_into_vram(bullet_spr_fname, 10, bullet_spr_addr>>12, bullet_spr_addr<<4);
     _load_file_into_ram(bullet_anim_fname, 10, bullet_anim_addr);
 }
@@ -43,7 +43,7 @@ void g_init_obj_refs(void){
     //set met object information
     object_defs[4].anim_addr = met_anim_addr;
     object_defs[4].num_of_sprs = *met_anim_addr;
-    object_defs[4].pal_off = 6;
+    object_defs[4].pal_off = 8;
     object_defs[4].spr_addr = met_spr_addr;
     object_defs[4].update_ptr = met_update;
     object_defs[4].draw_ptr = met_draw;
@@ -57,7 +57,7 @@ void g_init_obj_refs(void){
     //set bullet object information
     object_defs[5].anim_addr = bullet_anim_addr;
     object_defs[5].num_of_sprs = *bullet_anim_addr;
-    object_defs[5].pal_off = 7;
+    object_defs[5].pal_off = 9;
     object_defs[5].spr_addr = bullet_spr_addr;
     object_defs[5].update_ptr = bullet_update;
     object_defs[5].draw_ptr = bullet_draw;

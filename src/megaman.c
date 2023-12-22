@@ -18,6 +18,7 @@ char falling = 1;
 char megaman_hurt = 0;
 char megaman_invinc = 0;
 char m_invnc_timer = 0;
+char is_shooting = 0;
 
 
 void hurt_megaman(char dir, char health_decrease){
@@ -51,27 +52,9 @@ void hurt_megaman(char dir, char health_decrease){
     }
 }
 
-#pragma code-name (push, "BANKRAM02")
-void m_bullet_update(char obj_ind){
-    int i = 0;
-
-    _m_apply_velocity(&objects[obj_ind]);
-    // play_obj_anim(4, m_bullet_anim, obj_ind);
-
-
-    // for(i=0; i<no_of_objs; i++){
-    //     // if(obj_alloc_table[i] == 0){
-    //     //     continue; }
-
-    //     if(object_defs[objects[i].obj_type_ref].interaction_type == 1){
-            
-    //     }
-    // }
-}
-#pragma code-name(pop)
-
-
 #pragma code-name (push, "BANKRAM01")
+
+
 void m_bullet_draw(char obj_ind){
 
 }
@@ -109,15 +92,15 @@ void load_megaman_spr_data(){
     megaman_obj.anim_index = 0;
     megaman_obj.frame = 0;
 
-    //setting up megaman bullet object data
+    // setting up megaman bullet object data
     object_defs[3].anim_addr = m_bullet_addr;
     object_defs[3].num_of_sprs = 1;
     object_defs[3].spr_addr = m_bullet_spr_addr;
     object_defs[3].pal_off = 3;
-    object_defs[3].update_ptr = m_bullet_update;
-    object_defs[3].draw_ptr = m_bullet_draw;
-    object_defs[3].spr_width = 16;
-    object_defs[3].spr_height = 16;
+    object_defs[3].update_ptr = NULL;
+    object_defs[3].draw_ptr = NULL;
+    object_defs[3].spr_width = 8;
+    object_defs[3].spr_height = 8;
     object_defs[3].width = 8;
     object_defs[3].height = 8;
     object_defs[3].interaction_type = 3;
@@ -221,29 +204,110 @@ void shoot_check(int joystick){
     char bullet_right_speed = 4;
 
     if(get_pressed(joystick, JOY_B) && !was_pressing_b){
-        char obj_ind = alloc_obj();
+        char bullet_ind = 255;
+        char i = 0;
 
+        for (i=0; i<3; i++){
+            if(bullet_objects[i].obj_type_ref == 0){
+                bullet_ind = i;
+                break;
+            }
+        }
+
+        if(bullet_ind == 255){
+            if(!get_pressed(joystick, JOY_B)){
+                was_pressing_b = 0;
+            }
+            return;
+        }
+
+        is_shooting = 15;
         was_pressing_b = 1;
 
-        objects[obj_ind].obj_type_ref = m_bullet_obj_ind;
-        objects[obj_ind].spr_ind = alloc_sprites(object_defs[m_bullet_obj_ind].num_of_sprs);
-        objects[obj_ind].spawn_id = 0;
-        objects[obj_ind].update_ptr = object_defs[m_bullet_obj_ind].update_ptr;
-        objects[obj_ind].draw_ptr = object_defs[m_bullet_obj_ind].draw_ptr;
+        bullet_objects[bullet_ind].obj_type_ref = m_bullet_obj_ind;
+        bullet_objects[bullet_ind].spr_ind = alloc_sprites(object_defs[m_bullet_obj_ind].num_of_sprs);
+        bullet_objects[bullet_ind].spawn_id = 0;
+        bullet_objects[bullet_ind].update_ptr = object_defs[m_bullet_obj_ind].update_ptr;
+        bullet_objects[bullet_ind].draw_ptr = object_defs[m_bullet_obj_ind].draw_ptr;
 
-        objects[obj_ind].x = megaman_obj.x;
-        objects[obj_ind].y = megaman_obj.y;
+        bullet_objects[bullet_ind].x = megaman_obj.x;
+        bullet_objects[bullet_ind].y = megaman_obj.y-1;
 
         if(megaman_obj.status & 0b00000010){
-            objects[obj_ind].x_vel = bullet_right_speed;
+            bullet_objects[bullet_ind].x += 15;
+            bullet_objects[bullet_ind].x_vel = bullet_right_speed;
         }
         else{
-            objects[obj_ind].x_vel = bullet_left_speed;
+            bullet_objects[bullet_ind].x -= 15;
+            bullet_objects[bullet_ind].x_vel = bullet_left_speed;
         }
     }
     
     if(!get_pressed(joystick, JOY_B)){
         was_pressing_b = 0;
+    }
+}
+
+void m_bullet_update(char obj_ind){
+    int i = 0;
+
+    _m_apply_velocity(&bullet_objects[obj_ind]);
+    // play_obj_anim(4, m_bullet_anim, obj_ind);
+
+
+    // for(i=0; i<5; i++){
+    //     // if(obj_alloc_table[i] == 0){
+    //     //     continue; }
+
+    //     if(object_defs[objects[i].obj_type_ref].interaction_type == 1){
+            
+    //     }
+    // }
+}
+
+void update_bullets(){    
+    char i = 0;
+    for (i=0; i<3; i++){
+        if(bullet_objects[i].obj_type_ref != 0){
+            int obj_x_pos = (bullet_objects[i].x << 1) | (bullet_objects[i].frac_x >> 7);
+
+            m_bullet_update(i);
+            
+            if(bullet_objects[i].timer1  > 0){
+            bullet_objects[i].timer1 -= 1;}
+            
+            if(bullet_objects[i].timer2  > 0){
+            bullet_objects[i].timer2 -= 1;}
+
+            if(bullet_objects[i].timer3  > 0){
+            bullet_objects[i].timer3 -= 1;}
+
+            if(scroll_x > obj_x_pos && scroll_x - obj_x_pos > 0){
+                bullet_objects[i].obj_type_ref = 0;
+                dealloc_sprites(bullet_objects[i].spr_ind);
+                continue;
+            }
+            else if(scroll_x < obj_x_pos && obj_x_pos - scroll_x > 512){
+                bullet_objects[i].obj_type_ref = 0;
+                dealloc_sprites(bullet_objects[i].spr_ind);
+                continue;
+            }
+
+            else if(bullet_objects[i].y>512 || bullet_objects[i].y<0){
+                bullet_objects[i].obj_type_ref = 0;
+                dealloc_sprites(bullet_objects[i].spr_ind);
+                continue;
+            }
+        }
+    }
+}
+
+void draw_bullets(){
+    char i = 0;
+    for (i=0; i<3; i++){
+        if(bullet_objects[i].obj_type_ref != 0){
+            play_obj_struct_anim_frame(&bullet_objects[i], 0);
+        }
     }
 }
 
@@ -267,8 +331,8 @@ void update_megaman(){
     if(megaman_obj.x < 16){
         megaman_obj.x = 16;
     }
-
-
+    
+    update_bullets();
 
     if(megaman_invinc){
         m_invnc_timer -= 1;
@@ -396,6 +460,10 @@ void update_megaman(){
     check_collision();
     curr_room = megaman_obj.x>>8;
 
+    if(is_shooting > 0){
+        is_shooting -= 1;
+    }
+
 
     if(megaman_hurt){
         play_anim(11, m_hurt_anim, &megaman_obj);
@@ -411,7 +479,11 @@ void update_megaman(){
             falling = 1;
         }
         else if((megaman_obj.status & 0b00000001) == 0){
-            if(falling){
+            if(is_shooting && !land_anim_check){
+                megaman_obj.frame = 20;
+                jump_anim = 0;
+            }
+            else if(falling){
                 megaman_obj.frame = 13;
                 megaman_obj.anim_timer = 0;
                 megaman_obj.anim_index = 0;
@@ -437,6 +509,9 @@ void update_megaman(){
         }
         else{
             megaman_obj.frame = 0;
+            if(is_shooting){
+                megaman_obj.frame = 1;
+            }
             megaman_obj.anim_timer = 0;
             megaman_obj.anim_index = 0;
             jump_anim = 0;
@@ -447,5 +522,6 @@ void update_megaman(){
 
 void animate_megaman(){
     play_anim_frame(&megaman_obj);
+    draw_bullets();
 }
 #pragma code-name (pop)

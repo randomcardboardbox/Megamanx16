@@ -113,17 +113,19 @@ void game_update(void) {
         update_megaman();
         // update_ui();
         RAM_BANK_SEL = object_code_block;
-        _update_objects(objects, scroll_x, &dealloc_obj);
+        // _update_objects(objects, scroll_x, &dealloc_obj);
+        update_objects();
         
         calc_scroll();
 
         _wait_for_nmi();
+        set_scroll();
+
         RAM_BANK_SEL = 1;
         animate_megaman();
 
-        zsm_play();
+        // zsm_play();
 
-        set_scroll();
         draw_objects();
     }
 } 
@@ -135,8 +137,8 @@ void main(void){
     _init_irq_handler();
     load_code_segments();
 
-    RAM_BANK_SEL = 3;
-    title_sequence();
+    // RAM_BANK_SEL = 3;
+    // title_sequence();
 
     set_layer_config();
 

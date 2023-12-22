@@ -164,8 +164,8 @@ function call_exporter()
 
         metatiles = {}
 
-        for j=0, img_width, 1 do
-            for i=0, img_height, 1 do
+        for j=0, img_height-1, 1 do
+            for i=0, img_width-1, 1 do
                 local ind1 = get_tilemap_ind(tilemap, i*2,j*2)
                 local ind2 = get_tilemap_ind(tilemap, i*2+1,j*2)
                 local ind3 = get_tilemap_ind(tilemap, i*2,j*2+1)
@@ -452,7 +452,7 @@ function call_exporter()
 
             if(active_spr.layers[1].isTilemap) then
                 parse_tilemap_data(file)
-                app.command.Undo()
+                -- app.command.Undo()
             else
                 return_data = parse_sprite_data(file)
                 num_of_sprites = return_data[1]

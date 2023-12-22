@@ -65,10 +65,16 @@ void empty_obj_func(char obj_ind);
 void spawn_check(int chunk);
 void check_despawn(char obj_ind);
 
+char _collision_with_bullet(char obj_ind);
+char _collision_with_object(char obj1, char obj2);
+
 extern void _update_objects(int obj_arr_addr, int scroll_x, void (*dealloc_func)(char));
 extern void _draw_objects(void (*draw_func)(char), int obj_arr_addr);
 
 void update_objects();
 void draw_objects();
+
+#define NO_OF_ENEMIES 5
+extern char enemy_objects[NO_OF_ENEMIES];
 
 #endif//OBJECT
