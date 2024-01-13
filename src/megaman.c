@@ -52,6 +52,46 @@ void hurt_megaman(char dir, char health_decrease){
     }
 }
 
+void respawn(){
+    char index = 0;
+
+    megaman_obj.x = 100;
+    megaman_obj.y = 100;
+    megaman_obj.health = 28;
+
+    initial_health = 28;
+    flush_timer = 0;
+    started_flush = 0;
+    seg_flush_time = 0;
+
+    if(bullet_objects[0].obj_type_ref != 0){
+        bullet_objects[0].obj_type_ref = 0;
+        dealloc_sprites(bullet_objects[0].spr_ind);
+    }
+    if(bullet_objects[0].obj_type_ref != 0){
+        bullet_objects[1].obj_type_ref = 0;
+        dealloc_sprites(bullet_objects[1].spr_ind);
+    }
+    if(bullet_objects[0].obj_type_ref != 0){
+        bullet_objects[2].obj_type_ref = 0;
+        dealloc_sprites(bullet_objects[2].spr_ind);
+    }
+
+    clear_objs();
+
+    for(index=0; index<16; index++){
+        spawn_check(index);
+    }
+    for(index=0; index<32; index++){                        // transfer mapbase data into vram
+        RAM_BANK_SEL = tile_set_ram_bank+0;
+        _load_vert_map_sect(0, 64, 0, index, tile_map0_ram_addr, map_l0_vram_addr);
+        RAM_BANK_SEL = tile_set_ram_bank+1;
+        _load_vert_map_sect(0, 64, 0, index, tile_map1_ram_addr, map_l1_vram_addr);
+    }
+    RAM_BANK_SEL = 1;
+}
+
+
 #pragma code-name (push, "BANKRAM01")
 
 
@@ -346,6 +386,11 @@ void update_megaman(){
         }
     }
     else{
+        if(megaman_obj.health == 0){
+            respawn();
+            return;
+        }
+
         shoot_check(joystick);
 
         if(get_pressed(joystick, JOY_RIGHT)){

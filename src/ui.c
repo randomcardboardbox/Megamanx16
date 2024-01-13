@@ -11,11 +11,7 @@ void null_update(){
 
 }
 
-char flush_timer = 0;
 char segment_frames[] = { 0,5,9,12,14 };
-char initial_health = 28;
-char started_flush = 0;
-char seg_flush_time = 0;
 
 void flush_red_health(){
     #define full_flush_time 20
@@ -48,7 +44,7 @@ void init_ui(){
     char m_seg_pal_filename[] = "hbarseg.pal";
     char m_seg_anim_filename[] = "hbarseg.anm";
 
-    int health_bar_spr_addr = 0x1B80;
+    int health_bar_spr_addr = 0x1E00;
     int health_bar_seg_spr_addr = 0x1C50;
 
     int *m_hbar_addr = (int*) malloc(0x560);

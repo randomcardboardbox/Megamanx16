@@ -47,7 +47,7 @@ void load_new_room_ver(){
         } 
 
         _wait_for_nmi();
-        // zsm_play();
+        //zsm_play();
         scroll_y += scroll_speed;
         L0_VSCROLL = scroll_y;
         L1_VSCROLL = scroll_y;
@@ -106,7 +106,7 @@ void load_new_room_hor(){
         } 
 
         _wait_for_nmi();
-        // zsm_play();
+        //zsm_play();
         scroll_x += scroll_speed;
         L0_HSCROLL = scroll_x;
         L1_HSCROLL = scroll_x;

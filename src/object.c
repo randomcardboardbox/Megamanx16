@@ -31,7 +31,7 @@ char alloc_obj(){
 void clear_objs(){
     int i = 0;
     for(i=0; i<no_of_objs; i++){
-        if(obj_alloc_table[i]){
+        if(obj_alloc_table[i] != 0){
             dealloc_obj(i);
         }
     }
@@ -56,8 +56,8 @@ void dealloc_obj(char obj_ind){
     //     }
     // }
 
-    objects[obj_ind].spr_ind = NULL_SPRITE;
     objects[obj_ind] = object;
+    objects[obj_ind].spr_ind = NULL_SPRITE;
     objects[obj_ind].obj_type_ref = 0;
     obj_alloc_table[obj_ind] = 0;
 }

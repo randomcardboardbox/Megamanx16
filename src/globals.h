@@ -43,6 +43,11 @@ extern struct ObjectReferenceStruct object_defs[no_of_objtypes];
 extern struct ObjectStruct objects[no_of_objs];
 extern struct ObjectStruct bullet_objects[3];
 
+extern char initial_health;
+extern char flush_timer;
+extern char started_flush;
+extern char seg_flush_time;
+
 extern char object_code_block;
 
 #endif

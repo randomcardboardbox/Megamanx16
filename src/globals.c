@@ -10,7 +10,7 @@ int spawn_data_addr = 0x0000;
 
 char curr_room=0;
 
-char lvl_num = 0;
+char lvl_num = 3;
 char room_data_size = 12;
 int map_info_addr = 0;
 char last_room;
@@ -30,3 +30,8 @@ char bg_parallax_x;
 char bg_parallax_y;
 
 char object_code_block = 2;
+
+char initial_health = 28;
+char flush_timer = 0;
+char started_flush = 0;
+char seg_flush_time = 0;
