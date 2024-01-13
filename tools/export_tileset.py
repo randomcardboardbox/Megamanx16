@@ -239,6 +239,11 @@ for k, v in ts_paths.items():
         metatiles_arr[k] = None
         pall_offsets_arr[k] = None
 
+def level_sort_func(e):
+    level_num = e["identifier"][len("Level_"):]
+    return(int(level_num))
+levels.sort(key=level_sort_func)
+
 
 # create information file for level
 full_filename = filename + "I" + extension

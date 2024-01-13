@@ -33,6 +33,8 @@ extern void _play_obj_anim_frame(int x_off, int y_off, char pal_off, int spr_add
 extern void _update_obj_pos(int x, int y, char pal_off, int base_addr, char no_of_sprs, int VRAM_sprattr);
 extern void _play_obj_anim(void);
 
+extern int _get_random_int(void);
+
 // Function Definitions:
 
 char alloc_sprites(char size);

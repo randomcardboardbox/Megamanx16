@@ -19,6 +19,7 @@
 .export __init_irq_handler
 .export __force_halt
 .export __render_text
+.export __get_random_int
 
 ; TDONE:load file into ram
 ; TDONE:load file into vera
@@ -36,9 +37,15 @@
 ;                           where the palette file will be loaded
 
 __load_palette_from_file:
+    ;TODO: being able to address all colour palletes
     ; storing the variables loaded
     ; by pushing them onto the stack
+    tay
+
+    lda RAM_BANK_SEL
     pha
+
+    phy
 
     lda (sp)
     inc sp
@@ -86,6 +93,8 @@ __load_palette_from_file:
     lda #3
     jsr LOAD
 
+    pla
+    sta RAM_BANK_SEL
     rts
 
 ; _load_file_into_vram(int fname_ptr, char fname_size, int ram_addr):
@@ -1014,4 +1023,9 @@ __render_text:
     cpy TEXT_SIZE
     bne @character_render_loop
 
+    rts
+
+
+__get_random_int:
+    jsr ENTROPY_GET
     rts

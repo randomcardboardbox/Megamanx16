@@ -6,6 +6,7 @@
 #include "globals.h"
 #include "utils.h"
 #include "megaman.h"
+#include "gutslvl.h"
 
 int old_scroll_block = 0;
 int old_scroll_block_bg = 0;
@@ -15,6 +16,7 @@ int megaman_frac_vel = 200;
 
 
 void load_new_room_ver(){
+    int frame_index = 0;
     int index=0;
     int scroll_block;
 
@@ -38,6 +40,9 @@ void load_new_room_ver(){
 
     scroll_y += scroll_speed;
 
+    RAM_BANK_SEL = 2;
+    level_transition_start(lvl_num);
+
     while((scroll_y%512) != 0){
         char old_frac_y = megaman_obj.frac_y;
 
@@ -53,6 +58,9 @@ void load_new_room_ver(){
         L1_VSCROLL = scroll_y;
         RAM_BANK_SEL = 1;
         animate_megaman();
+
+        RAM_BANK_SEL = 2;
+        level_transition_update(lvl_num, frame_index);
         
         scroll_block = scroll_y >> 4;
 
@@ -84,17 +92,23 @@ void load_new_room_ver(){
         RAM_BANK_SEL = tile_set_ram_bank+1;
         _load_vert_map_sect(0, 2, 0, index, tile_map1_ram_addr, map_l1_vram_addr);
     }
+
+    RAM_BANK_SEL = 2;
+    level_transition_end(lvl_num);
 }
 
 
 void load_new_room_hor(){
+    int frame_index = 0;
     lvl_num += 1;
 
     load_map_data();
     // megaman_obj.x = 32;
     curr_room = 0;
-    
     scroll_x += scroll_speed;
+
+    RAM_BANK_SEL = 2;
+    level_transition_start(lvl_num);
 
     while((scroll_x%512) != 0){
         int scroll_block;
@@ -113,6 +127,9 @@ void load_new_room_hor(){
 
         RAM_BANK_SEL = 1;
         animate_megaman();
+
+        RAM_BANK_SEL = 2;
+        level_transition_update(lvl_num, frame_index);
         
         scroll_block = scroll_x >> 4;
 
@@ -127,6 +144,8 @@ void load_new_room_hor(){
             _load_vert_map_sect(0, 64, 0, load_pos, tile_map1_ram_addr, map_l1_vram_addr);
         }
         old_scroll_block = scroll_block;
+
+        frame_index += 1;
     }
 
     // megaman_obj.x = 32;
@@ -137,6 +156,9 @@ void load_new_room_hor(){
     _load_vert_map_sect(0, 64, 0, 31, tile_map0_ram_addr, map_l0_vram_addr);
     RAM_BANK_SEL = tile_set_ram_bank+1;
     _load_vert_map_sect(0, 64, 0, 31, tile_map1_ram_addr, map_l1_vram_addr);
+
+    RAM_BANK_SEL = 2;
+    level_transition_end(lvl_num);
 }
 
 void check_room_transition(){

@@ -39,12 +39,9 @@ void set_layer_config(void){
     VERA_dc_hscale = 128;
     VERA_dc_vscale = 128;
 
-    // L0_CONFIG = 0b01000001;
-    // L0_MAPBASE = (map_l0_vram_addr >> 9);
-    // L0_TILEBASE = 0b00000011 | ((tile_set_addr2>>1)&0b11111100);
-    L0_CONFIG = 0b01000010;
+    L0_CONFIG = 0b01000001;
     L0_MAPBASE = (map_l0_vram_addr >> 9);
-    L0_TILEBASE = 0b00000011 | ((tile_set_addr>>1)&0b11111100);
+    L0_TILEBASE = 0b00000011 | ((tile_set_addr2>>1)&0b11111100);
 
     L0_HSCROLL_L = 0;
     L0_HSCROLL_H = 0;
@@ -90,7 +87,7 @@ void game_update(void) {
     load_megaman_spr_data();
     init_ui();
 
-    RAM_BANK_SEL = 2;
+    RAM_BANK_SEL = object_code_block;
     g_init_lvl();
 
     load_map_data();
@@ -117,6 +114,9 @@ void game_update(void) {
         //update_ui();
         RAM_BANK_SEL = object_code_block;
         _update_objects(objects, scroll_x, &dealloc_obj);
+
+        RAM_BANK_SEL = object_code_block;
+        level_update();
         // update_objects();
         
         calc_scroll();
@@ -140,7 +140,7 @@ void main(void){
     load_code_segments();
 
     RAM_BANK_SEL = 3;
-    title_sequence();
+    // title_sequence();
 
     set_layer_config();
 

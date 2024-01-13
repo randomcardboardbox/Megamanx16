@@ -420,59 +420,62 @@ function call_exporter()
 
     function export_sprite()
         local filepath = dialog.data.filename
-        local file,err = io.open(filepath,'wb')
-        local file2 = nil
-        local err2 = nil
-        if(can_export_anim()) then
-            file2, err2 = io.open(dialog.data.anim_filename, 'wb')
-        end
-
-        if (file and (not can_export_anim() or file2)) then
-            file:write(string.char(0,0)) -- two byte buffer required for all x16 files
-
-            if(dialog.data.add_empty_tile) then
-                size = tonumber(dialog.data.spr_width) * tonumber(dialog.data.spr_height)
-                if(dialog.data.spr_bpp == "8") then
-                    for i=1, size, 1 do
-                        file:write(string.char(0))
-                    end
-                end
-                if(dialog.data.spr_bpp == "4") then
-                    for i=1, size/2, 1 do
-                        file:write(string.char(0))
-                    end
-                end
-                if(dialog.data.spr_bpp == "2") then
-                    for i=1, size/4, 1 do
-                        file:write(string.char(0))
-                    end
-                end
+        
+        if(filepath ~= "") then
+            local file,err = io.open(filepath,'wb')
+            local file2 = nil
+            local err2 = nil
+            if(can_export_anim()) then
+                file2, err2 = io.open(dialog.data.anim_filename, 'wb')
             end
 
+            if (file and (not can_export_anim() or file2)) then
+                file:write(string.char(0,0)) -- two byte buffer required for all x16 files
 
-            if(active_spr.layers[1].isTilemap) then
-                parse_tilemap_data(file)
-                -- app.command.Undo()
+                if(dialog.data.add_empty_tile) then
+                    size = tonumber(dialog.data.spr_width) * tonumber(dialog.data.spr_height)
+                    if(dialog.data.spr_bpp == "8") then
+                        for i=1, size, 1 do
+                            file:write(string.char(0))
+                        end
+                    end
+                    if(dialog.data.spr_bpp == "4") then
+                        for i=1, size/2, 1 do
+                            file:write(string.char(0))
+                        end
+                    end
+                    if(dialog.data.spr_bpp == "2") then
+                        for i=1, size/4, 1 do
+                            file:write(string.char(0))
+                        end
+                    end
+                end
+
+
+                if(active_spr.layers[1].isTilemap) then
+                    parse_tilemap_data(file)
+                    -- app.command.Undo()
+                else
+                    return_data = parse_sprite_data(file)
+                    num_of_sprites = return_data[1]
+                    frames = return_data[2]
+
+                    if(can_export_anim()) then
+                        file2:write(string.char(0,0))
+                        parse_anim_data(file2, num_of_sprites, frames)
+                        file2:close()
+                    end
+                end
+                file:close()
+                dialog:close()
             else
-                return_data = parse_sprite_data(file)
-                num_of_sprites = return_data[1]
-                frames = return_data[2]
-
-                if(can_export_anim()) then
-                    file2:write(string.char(0,0))
-                    parse_anim_data(file2, num_of_sprites, frames)
-                    file2:close()
-                end
+                print("error 1:", err)
+                print("error 2:", err2)
+                print("file obj 1:", file)
+                print("file obj 2:", file2)
+                print("attempted 1:", dialog.data.filename)
+                print("attempted 2:", dialog.data.anim_filename)
             end
-            file:close()
-            dialog:close()
-        else
-            print("error 1:", err)
-            print("error 2:", err2)
-            print("file obj 1:", file)
-            print("file obj 2:", file2)
-            print("attempted 1:", dialog.data.filename)
-            print("attempted 2:", dialog.data.anim_filename)
         end
     end
 

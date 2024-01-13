@@ -50,4 +50,9 @@ extern char seg_flush_time;
 
 extern char object_code_block;
 
+extern void (*level_update)(void);
+extern void (*level_transition_start)(char level_num);
+extern void (*level_transition_end)(char level_num);
+extern void (*level_transition_update)(char level_num, int frame_index);
+
 #endif
