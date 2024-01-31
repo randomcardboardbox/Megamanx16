@@ -111,7 +111,7 @@ void game_update(void) {
     while(1){
         RAM_BANK_SEL = 1;
         update_megaman();
-        //update_ui();
+        update_ui();
         RAM_BANK_SEL = object_code_block;
         _update_objects(objects, scroll_x, &dealloc_obj);
 
@@ -127,7 +127,7 @@ void game_update(void) {
         RAM_BANK_SEL = 1;
         animate_megaman();
 
-        //zsm_play();
+        // zsm_play();
 
         draw_objects();
     }
@@ -140,7 +140,7 @@ void main(void){
     load_code_segments();
 
     RAM_BANK_SEL = 3;
-    // title_sequence();
+    title_sequence();
 
     set_layer_config();
 

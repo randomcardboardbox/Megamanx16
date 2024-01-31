@@ -103,6 +103,7 @@ void underground_pallete_shift(){
         }
         pal_timer -= 1;
 
+        
         _wait_for_nmi();
     }
 

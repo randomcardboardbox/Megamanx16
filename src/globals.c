@@ -33,7 +33,7 @@ char bg_parallax_y;
 
 char object_code_block = 2;
 
-char initial_health = 28;
+char initial_health = 29;
 char flush_timer = 0;
 char started_flush = 0;
 char seg_flush_time = 0;

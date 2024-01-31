@@ -122,7 +122,7 @@ void init_ui(){
     }
 }
 
-void update_ui(){
+void update_health_bar(){
     char i;
     char no_of_segs = ((megaman_obj.health) / 4);
     char no_of_red_segs = ((initial_health) / 4);
@@ -158,4 +158,16 @@ void update_ui(){
     }
 
     flush_red_health();
+}
+
+char last_hbar_update = 0;
+void update_ui(){
+    if(initial_health != megaman_obj.health){
+        update_health_bar();
+        last_hbar_update = 1;
+    }
+    else if(last_hbar_update == 1){
+        last_hbar_update = 0;
+        update_health_bar();
+    }
 }
